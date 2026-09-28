@@ -20,6 +20,7 @@ export const EVENT_NAMES = [
   "pro_interest",
   "checkout_started",
   "subscription_active",
+  "ai_message",
 ] as const;
 export type EventName = (typeof EVENT_NAMES)[number];
 

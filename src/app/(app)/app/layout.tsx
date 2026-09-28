@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { signOut } from "@/app/(app)/app/actions";
 import { JourneyRail } from "@/components/app/journey-rail";
+import { AssistantDrawer } from "@/components/assistant/assistant-drawer";
 import { LegalNotice } from "@/components/legal-notice";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { appCopy } from "@/content/app";
+import { assistantCopy } from "@/content/assistant";
+import { aiEnabled, assistantState } from "@/lib/ai/server";
 import { requireUser } from "@/lib/data/user";
 
 export const metadata: Metadata = {
@@ -18,6 +21,7 @@ export const metadata: Metadata = {
 export default async function AppLayout({ children }: LayoutProps<"/app">) {
   const { supabase, user, profile } = await requireUser();
   const { count } = await supabase.from("user_plans").select("id", { count: "exact", head: true });
+  const assistant = aiEnabled() ? await assistantState(supabase) : null;
 
   const stops = [
     {
@@ -39,6 +43,16 @@ export default async function AppLayout({ children }: LayoutProps<"/app">) {
       done: (count ?? 0) > 0,
     },
     { href: "/app/comparar", match: "/app/comparar", label: appCopy.rail.compare, done: false },
+    ...(assistant
+      ? [
+          {
+            href: "/app/assistente",
+            match: "/app/assistente",
+            label: assistantCopy.rail,
+            done: false,
+          },
+        ]
+      : []),
     { href: "/app/conta", match: "/app/conta", label: appCopy.rail.account, done: false },
   ];
 
@@ -67,6 +81,8 @@ export default async function AppLayout({ children }: LayoutProps<"/app">) {
           {children}
         </main>
       </div>
+
+      {assistant && <AssistantDrawer {...assistant} />}
 
       <footer className="container-page pb-10">
         <LegalNotice />

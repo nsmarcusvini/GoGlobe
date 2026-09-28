@@ -15,6 +15,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Dev only: lets a second browser session run on 127.0.0.1 (separate cookies
+  // from localhost) for testing two accounts side by side.
+  allowedDevOrigins: ["127.0.0.1"],
   poweredByHeader: false,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

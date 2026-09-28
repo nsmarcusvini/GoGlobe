@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AssistantAction } from "@/components/assistant/assistant-drawer";
+import { assistantCopy } from "@/content/assistant";
+import { aiEnabled } from "@/lib/ai/server";
 import { notFound } from "next/navigation";
 import { setPlanStatus, unfollowPathway } from "@/app/(app)/app/actions";
 import { ActionForm } from "@/components/admin/action-form";
@@ -131,6 +134,13 @@ export default async function PlanPage({ params }: PageProps<"/app/planos/[id]">
             <span className="sr-only"> (abre em nova aba)</span>
           </a>
         </p>
+        {aiEnabled() && items.length > 0 && (
+          <div>
+            <AssistantAction request={{ action: "order", planId: plan.id, name: pathway.name_pt }}>
+              {assistantCopy.actions.order}
+            </AssistantAction>
+          </div>
+        )}
       </header>
 
       {pathway.version > plan.pathway_version && (

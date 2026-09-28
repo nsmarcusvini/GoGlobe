@@ -662,6 +662,62 @@ export type Database = {
           },
         ];
       };
+      source_chunks: {
+        Row: {
+          chunk_index: number;
+          content: string;
+          content_hash: string;
+          created_at: string;
+          embedding: string;
+          embedding_model: string;
+          fetched_at: string;
+          id: string;
+          origin: Database["public"]["Enums"]["chunk_origin"];
+          pathway_id: string;
+          title: string | null;
+          updated_at: string;
+          url: string;
+        };
+        Insert: {
+          chunk_index: number;
+          content: string;
+          content_hash: string;
+          created_at?: string;
+          embedding: string;
+          embedding_model: string;
+          fetched_at: string;
+          id?: string;
+          origin: Database["public"]["Enums"]["chunk_origin"];
+          pathway_id: string;
+          title?: string | null;
+          updated_at?: string;
+          url: string;
+        };
+        Update: {
+          chunk_index?: number;
+          content?: string;
+          content_hash?: string;
+          created_at?: string;
+          embedding?: string;
+          embedding_model?: string;
+          fetched_at?: string;
+          id?: string;
+          origin?: Database["public"]["Enums"]["chunk_origin"];
+          pathway_id?: string;
+          title?: string | null;
+          updated_at?: string;
+          url?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "source_chunks_pathway_id_fkey";
+            columns: ["pathway_id"];
+            isOneToOne: false;
+            referencedRelation: "pathways";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       stripe_events: {
         Row: {
           created_at: string;
@@ -817,12 +873,39 @@ export type Database = {
           week: number;
         }[];
       };
+      ai_period_start: { Args: Record<PropertyKey, never>; Returns: string };
+      consume_ai_message: {
+        Args: { p_limit: number; p_user: string };
+        Returns: {
+          allowed: boolean;
+          quota: number;
+          used: number;
+        }[];
+      };
       hit_rate_limit: {
         Args: { p_key: string; p_limit: number; p_window_seconds: number };
         Returns: boolean;
       };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_pro: { Args: { target?: string }; Returns: boolean };
+      match_source_chunks: {
+        Args: {
+          match_count?: number;
+          model: string;
+          pathway_ids: string[];
+          query_embedding: string;
+        };
+        Returns: {
+          content: string;
+          fetched_at: string;
+          id: string;
+          origin: Database["public"]["Enums"]["chunk_origin"];
+          pathway_id: string;
+          similarity: number;
+          title: string;
+          url: string;
+        }[];
+      };
       pathway_changes_since: {
         Args: { p_pathway: string; p_since: string };
         Returns: {
@@ -832,9 +915,11 @@ export type Database = {
           table_name: string;
         }[];
       };
+      refund_ai_message: { Args: { p_user: string }; Returns: undefined };
     };
     Enums: {
       checklist_source: "step" | "document" | "custom";
+      chunk_origin: "official_page" | "curated";
       content_status: "draft" | "published" | "archived";
       education_level:
         "none" | "high_school" | "technical" | "bachelor" | "postgraduate" | "master" | "doctorate";
@@ -961,6 +1046,7 @@ export const Constants = {
   public: {
     Enums: {
       checklist_source: ["step", "document", "custom"],
+      chunk_origin: ["official_page", "curated"],
       content_status: ["draft", "published", "archived"],
       education_level: [
         "none",

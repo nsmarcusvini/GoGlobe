@@ -26,6 +26,10 @@ const serverSchema = z.object({
   ANTHROPIC_API_KEY: z.string().optional(),
   ANTHROPIC_MODEL: z.string().optional(),
   AI_MONTHLY_MESSAGE_QUOTA: z.coerce.number().int().positive().optional(),
+  // Offline stand-ins (lexical embeddings + canned answers) when there is no key.
+  AI_MOCK: booleanFlag,
+  VOYAGE_API_KEY: z.string().optional(),
+  VOYAGE_MODEL: z.string().optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicSchema>;

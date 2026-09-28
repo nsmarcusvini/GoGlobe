@@ -25,9 +25,11 @@
     "check-sources": "node scripts/check-sources.ts",
     "make-admin": "node scripts/make-admin.ts",
     "test:coverage": "vitest run --coverage",
-    "eligibility:examples": "node scripts/eligibility-examples.ts"
+    "eligibility:examples": "node scripts/eligibility-examples.ts",
+    "ingest": "node scripts/ingest-sources.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
     "@vercel/analytics": "^2.0.1",

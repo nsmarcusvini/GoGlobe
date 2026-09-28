@@ -3,9 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { followPathway } from "@/app/(app)/app/actions";
 import { RequirementTrack } from "@/components/app/requirement-track";
+import { AssistantAction } from "@/components/assistant/assistant-drawer";
 import { Dossier } from "@/components/dossier/dossier";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { appCopy } from "@/content/app";
+import { assistantCopy } from "@/content/assistant";
+import { aiEnabled } from "@/lib/ai/server";
 import { todayInBrasilia } from "@/lib/app/today";
 import { getExchangeRates, getPathwayDetailBySlug, toEngineInput } from "@/lib/data/content";
 import { requireUser } from "@/lib/data/user";
@@ -58,6 +61,15 @@ export default async function AppPathwayPage({ params }: PageProps<"/app/caminho
               {s.meets} atende · {s.doesNotMeet} não atende ({s.hardFailures.length} eliminatório) ·{" "}
               {s.insufficientInfo} falta informação · {s.manualCheck} verificar
             </p>
+            {aiEnabled() && (
+              <div>
+                <AssistantAction
+                  request={{ action: "summary", slug: pathway.slug, name: pathway.name_pt }}
+                >
+                  {assistantCopy.actions.summary}
+                </AssistantAction>
+              </div>
+            )}
           </div>
           {plan ? (
             <ButtonLink href={`/app/planos/${plan.id}`} variant="secondary" arrow>
