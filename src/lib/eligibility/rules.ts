@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "../zod.ts";
 
 // Vocabulary shared with the database enums (supabase/migrations/*_foundation.sql).
 // Order matters: lowest to highest. The Phase 4 engine compares positions.

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 
 // Public variables must be referenced statically (process.env.NEXT_PUBLIC_X) so
 // Next.js can inline them into the client bundle.
