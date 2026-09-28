@@ -12,7 +12,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/"), changeFrequency: "weekly", priority: 1 },
     { url: url("/precos"), changeFrequency: "monthly", priority: 0.6 },
     { url: url("/aviso-legal"), changeFrequency: "yearly", priority: 0.3 },
+    { url: url("/sobre"), changeFrequency: "monthly", priority: 0.5 },
     { url: url("/privacidade"), changeFrequency: "yearly", priority: 0.3 },
+    { url: url("/termos"), changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const db = createPublicClient();

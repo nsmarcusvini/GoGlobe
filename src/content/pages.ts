@@ -1,42 +1,7 @@
-// Copy for pages still under construction and the 404 (pt-BR).
+// Copy for the 404 and error pages (pt-BR).
 // COPY: rascunho escrito pelo Claude, PENDENTE DE REVISÃO do fundador.
 
-export const upcoming = {
-  about: {
-    title: "Sobre o GoGlobe",
-    phase: "Fase 5",
-    summary: "Quem faz o GoGlobe, de onde vêm os dados e como conferimos cada fonte oficial.",
-  },
-  pricing: {
-    title: "Planos e preços",
-    phase: "Fase 6",
-    summary: "A comparação completa entre o plano Gratuito e o Pro, com os valores em reais.",
-  },
-  terms: {
-    title: "Termos de uso",
-    phase: "Fase 5",
-    summary: "As regras de uso do GoGlobe, escritas em português claro.",
-  },
-  privacy: {
-    title: "Política de privacidade",
-    phase: "Fase 6",
-    summary: "Como o GoGlobe trata os dados do seu perfil, conforme a LGPD.",
-  },
-  signIn: {
-    title: "Entrar",
-    phase: "Fase 5",
-    summary: "O acesso à sua conta, para retomar perfil, resultados e checklist de onde parou.",
-  },
-  onboarding: {
-    title: "Criar seu perfil",
-    phase: "Fase 5",
-    summary:
-      "Cinco etapas curtas sobre idade, formação, experiência, inglês e objetivo, salvas a cada passo.",
-  },
-} as const;
-
 export const underConstruction = {
-  status: "Trecho em construção",
   meanwhile: "Já no mapa",
   back: "Voltar para o início",
   // Waypoints that already exist: the solid part of the route.
@@ -54,4 +19,14 @@ export const notFound = {
   status: "Fora da rota",
   title: "Esta página não está no mapa.",
   body: "O endereço pode ter mudado ou nunca ter existido. Volte por um dos pontos abaixo.",
+} as const;
+
+export const routeBreak = {
+  coords: "Trecho interrompido",
+  title: "A rota se rompeu aqui.",
+  body: "Algo falhou do nosso lado ao carregar esta página. O que já estava salvo continua salvo.",
+  retry: "Tentar de novo",
+  safeSite: "Voltar ao início",
+  safeApp: "Voltar à sua conta",
+  globalTitle: "O GoGlobe não carregou.",
 } as const;

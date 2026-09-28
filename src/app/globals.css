@@ -504,6 +504,14 @@
   }
 }
 
+/* Rastreio (/sobre): the verification stamp lands on the requirement. */
+@keyframes stamp-in {
+  from {
+    opacity: 0;
+    transform: scale(1.35) rotate(-8deg);
+  }
+}
+
 /* Motion off means off: no reveals, no drawing, no camera. */
 @media (prefers-reduced-motion: reduce) {
   *,

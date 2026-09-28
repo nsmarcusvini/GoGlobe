@@ -9,11 +9,29 @@ test("unknown route shows the off-route page with a way back", async ({ page }) 
   ).toHaveAttribute("href", "/");
 });
 
-test("under-construction page says what it will hold", async ({ page }) => {
-  // /precos became a real page in Phase 6; /termos is still under construction.
+test("terms page is a draft with pending facts marked", async ({ page }) => {
   await page.goto("/termos");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Termos de uso");
-  await expect(page.getByText("Trecho em construção · Fase 5")).toBeVisible();
+  await expect(page.getByText(/pendente de revisão jurídica/)).toBeVisible();
+  await expect(page.getByText("[cidade do foro: pendente]")).toBeVisible();
+  await expect(page.getByText(/artigo 49 do Código de Defesa do Consumidor/)).toBeVisible();
+});
+
+test("about page traces the method and lists what GoGlobe never does", async ({ page }) => {
+  await page.goto("/sobre");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Uma informação, do governo até a sua tela.",
+  );
+  for (const step of [
+    "Publicado pelo governo",
+    "Lido por nós",
+    "Verificado e datado",
+    "Na sua tela",
+    "Conferido de novo",
+  ]) {
+    await expect(page.getByRole("heading", { name: step })).toBeVisible();
+  }
+  await expect(page.getByRole("heading", { name: "O que o GoGlobe não faz" })).toBeVisible();
 });
 
 test("hero route ledger lists every destination", async ({ page }) => {

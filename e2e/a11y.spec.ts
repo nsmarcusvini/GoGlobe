@@ -11,6 +11,8 @@ const PAGES = [
   "/precos",
   "/aviso-legal",
   "/privacidade",
+  "/termos",
+  "/sobre",
   "/entrar",
   "/rota-que-nao-existe",
 ];

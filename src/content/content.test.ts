@@ -21,7 +21,7 @@ const BANNED = [
 ];
 
 // A phrase is allowed only when its sentence denies it ("não dizemos ...").
-const NEGATED = /\bnao\b[^.]{0,80}$/;
+const NEGATED = /\b(nao|nunca)\b[^.]{0,80}$/;
 
 function offenders(text: string, phrase: string): number {
   return [...text.matchAll(new RegExp(phrase, "g"))].filter(
