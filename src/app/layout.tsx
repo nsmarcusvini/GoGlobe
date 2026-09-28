@@ -4,9 +4,10 @@ import { themeInitScript } from "@/components/theme/theme-script";
 import { site } from "@/content/site";
 import "./globals.css";
 
+// Latin covers Portuguese; only the width axis is used (keeps the file small for LCP).
 const bricolage = Bricolage_Grotesque({
-  subsets: ["latin", "latin-ext"],
-  axes: ["opsz", "wdth"],
+  subsets: ["latin"],
+  axes: ["wdth"],
   variable: "--font-bricolage",
   display: "swap",
 });
@@ -16,6 +17,8 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500", "600"],
   variable: "--font-jetbrains",
   display: "swap",
+  // Metadata only (coordinates, dates): not worth competing with the display font.
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -47,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Sets data-theme before first paint to avoid a light/dark flash. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="grain min-h-dvh">{children}</body>
+      <body className="min-h-dvh">{children}</body>
     </html>
   );
 }

@@ -223,10 +223,11 @@ export function RouteStory({ chapters }: { chapters: StoryChapter[] }) {
             data-chapter={index}
             className="flex min-h-[70svh] items-center px-(--gutter) py-12 lg:min-h-dvh lg:px-14 lg:py-0 xl:px-20"
           >
+            {/* Active chapter gets a route marker; text is never dimmed (AA contrast). */}
             <div
               className={cn(
-                "w-full max-w-xl transition-opacity duration-700",
-                active === index ? "opacity-100" : "opacity-35",
+                "relative w-full max-w-xl border-l-2 pl-6 transition-colors duration-700 lg:pl-8",
+                active === index ? "border-route" : "border-line",
               )}
             >
               {chapter.content}

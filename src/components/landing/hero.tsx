@@ -23,18 +23,12 @@ export function Hero() {
       </div>
 
       <div className="container-page grid min-h-[calc(100svh-4rem)] content-center gap-10 py-16 lg:gap-14 lg:py-24">
-        <p className="type-eyebrow animate-[fade-up_900ms_var(--ease-out-expo)_both]">
-          {hero.eyebrow}
-        </p>
+        <p className="type-eyebrow text-ink">{hero.eyebrow}</p>
 
         <div className="relative">
           <h1 id="hero-title" className="type-mega relative z-10 text-ink">
-            <span className="block animate-[fade-up_1000ms_var(--ease-out-expo)_100ms_both]">
-              {hero.titleTop}
-            </span>
-            <span className="block animate-[fade-up_1000ms_var(--ease-out-expo)_220ms_both] pl-[8vw] lg:pl-[14vw]">
-              {hero.titleBottom}
-            </span>
+            <span className="block">{hero.titleTop}</span>
+            <span className="block pl-[8vw] lg:pl-[14vw]">{hero.titleBottom}</span>
           </h1>
 
           {/* The route: drawn once on load, passing behind the headline. */}
@@ -78,7 +72,7 @@ export function Hero() {
             </span>
           </div>
 
-          <div className="grid animate-[fade-up_1000ms_var(--ease-out-expo)_450ms_both] gap-8 lg:pl-[2vw]">
+          <div className="grid gap-8 lg:pl-[2vw]">
             <p className="type-lead max-w-[46ch] text-ink">{hero.lead}</p>
             <div className="flex flex-wrap items-center gap-3">
               <ButtonLink href="/app/onboarding" size="lg" arrow>
