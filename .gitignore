@@ -50,3 +50,8 @@ next-env.d.ts
 # supabase local
 supabase/.branches
 supabase/.temp
+
+# local tooling
+.claude/
+.lh.tmp.cjs
+.shoot.tmp.mjs
