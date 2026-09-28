@@ -28,17 +28,30 @@ const AgeMax = z.object({ op: z.literal("age_max"), value: age }).strict();
 const AgeMin = z.object({ op: z.literal("age_min"), value: age }).strict();
 
 /**
- * Minimum English. Met by a self-declared `level` or by any listed test score
- * (overall score in that test's own scale).
+ * Official test threshold. `scope` says how the government applies it:
+ * - "overall": minimum overall/average score (compared with profiles.english_score);
+ * - "each_component": minimum in every skill (compared with the lowest skill score,
+ *   profiles.english_lowest_component).
+ * Only encode tests whose threshold is the same across skills; list the rest in
+ * the requirement description with the official table link.
+ */
+const EnglishTestThreshold = z
+  .object({
+    test: EnglishTest,
+    min_score: z.number().min(0),
+    scope: z.enum(["overall", "each_component"]),
+  })
+  .strict();
+
+/**
+ * Minimum English. Met by any listed official test threshold, or (only where the
+ * program itself accepts it) by a self-declared `level`.
  */
 const EnglishMin = z
   .object({
     op: z.literal("english_min"),
     level: EnglishLevel.optional(),
-    tests: z
-      .array(z.object({ test: EnglishTest, min_score: z.number().min(0) }).strict())
-      .min(1)
-      .optional(),
+    tests: z.array(EnglishTestThreshold).min(1).optional(),
   })
   .strict()
   .refine((rule) => rule.level !== undefined || rule.tests !== undefined, {

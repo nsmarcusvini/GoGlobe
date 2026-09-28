@@ -6,7 +6,8 @@ describe("parseRule", () => {
     { op: "age_max", value: 44 },
     { op: "age_min", value: 18 },
     { op: "english_min", level: "intermediate" },
-    { op: "english_min", tests: [{ test: "IELTS", min_score: 6 }] },
+    { op: "english_min", tests: [{ test: "IELTS", min_score: 6, scope: "each_component" }] },
+    { op: "english_min", tests: [{ test: "PTE", min_score: 58, scope: "overall" }] },
     { op: "education_min", level: "bachelor" },
     { op: "experience_min_years", value: 1 },
     { op: "budget_min_brl", value: 50000 },
@@ -28,9 +29,10 @@ describe("parseRule", () => {
     [{ op: "english_min" }, "english without level or tests"],
     [{ op: "english_min", level: "native" }, "unknown level"],
     [{ op: "english_min", tests: [] }, "empty test list"],
+    [{ op: "english_min", tests: [{ test: "IELTS", min_score: 6 }] }, "test without scope"],
     [{ op: "goal_in", goals: [] }, "empty goals"],
     [{ op: "age_max", value: 44, extra: true }, "unknown key"],
-  ])("rejects %j (%s)", (rule) => {
+  ] as [unknown, string][])("rejects %j (%s)", (rule, _reason) => {
     const result = parseRule(rule);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.length).toBeGreaterThan(0);
