@@ -23,7 +23,9 @@
     "map:build": "node scripts/build-map.mjs",
     "db:test": "supabase test db",
     "check-sources": "node scripts/check-sources.ts",
-    "make-admin": "node scripts/make-admin.ts"
+    "make-admin": "node scripts/make-admin.ts",
+    "test:coverage": "vitest run --coverage",
+    "eligibility:examples": "node scripts/eligibility-examples.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -41,6 +43,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/coverage-v8": "^5.0.2",
     "d3-geo": "^3.1.1",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
