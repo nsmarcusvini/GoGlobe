@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { LegalNotice } from "@/components/legal-notice";
 import { SourceBlock } from "@/components/ui/source-block";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { dossierCopy as t } from "@/content/dossier";
@@ -308,7 +307,6 @@ export function Dossier({
           </Section>
 
           {footer}
-          <LegalNotice />
         </div>
       </div>
     </article>

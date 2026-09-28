@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { LegalNotice } from "@/components/legal-notice";
 import { JourneyMap } from "@/components/map/journey-map";
 import type { RouteCode } from "@/components/map/routes";
 import { ButtonLink } from "@/components/ui/button";
@@ -146,7 +145,6 @@ export default async function CountryPage({ params }: PageProps<"/paises/[pais]"
           </ButtonLink>
         </div>
       </section>
-      <LegalNotice />
     </div>
   );
 }

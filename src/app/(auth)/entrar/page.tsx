@@ -3,7 +3,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signInWithGoogle } from "@/app/(auth)/actions";
 import { SignInForm } from "@/components/auth/sign-in-form";
-import { LegalNotice } from "@/components/legal-notice";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { Button } from "@/components/ui/button";
@@ -81,9 +80,6 @@ export default async function SignInPage({ searchParams }: PageProps<"/entrar">)
               </Link>
             </p>
           </div>
-        </div>
-        <div className="container-page pb-16">
-          <LegalNotice />
         </div>
       </main>
       <SiteFooter />
