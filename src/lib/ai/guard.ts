@@ -14,11 +14,7 @@ const ADVICE_PATTERNS = [
 ];
 
 function normalize(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ");
+  return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/\s+/g, " ");
 }
 
 export function isAdviceRequest(question: string): boolean {
