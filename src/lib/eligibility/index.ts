@@ -1,5 +1,8 @@
 // Eligibility engine: pure, DB-free functions (see section 6 of the MVP spec).
-// Implemented in Phase 4. Only the result vocabulary is fixed here.
+export * from "./evaluate.ts";
+export * from "./profile.ts";
+export * from "./rules.ts";
+export type * from "./types.ts";
 
 export const REQUIREMENT_STATUSES = [
   "meets",
@@ -8,8 +11,8 @@ export const REQUIREMENT_STATUSES = [
   "manual_check",
 ] as const;
 
-export type RequirementStatus = (typeof REQUIREMENT_STATUSES)[number];
-
-export function isRequirementStatus(value: unknown): value is RequirementStatus {
+export function isRequirementStatus(
+  value: unknown,
+): value is (typeof REQUIREMENT_STATUSES)[number] {
   return typeof value === "string" && (REQUIREMENT_STATUSES as readonly string[]).includes(value);
 }
