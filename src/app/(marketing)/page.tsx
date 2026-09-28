@@ -1,13 +1,21 @@
-import { LegalNotice } from "@/components/legal-notice";
-import { site } from "@/content/site";
+import { FinalCta } from "@/components/landing/final-cta";
+import { Hero } from "@/components/landing/hero";
+import { Honesty } from "@/components/landing/honesty";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { Plans } from "@/components/landing/plans";
+import { Proof } from "@/components/landing/proof";
+import { Story } from "@/components/landing/story";
 
-// Phase 1 placeholder. The landing page is built in Phase 2 with /sites-incriveis.
 export default function HomePage() {
   return (
-    <main>
-      <h1>{site.name}</h1>
-      <p>{site.description}</p>
-      <LegalNotice />
-    </main>
+    <>
+      <Hero />
+      <Story />
+      <HowItWorks />
+      <Proof />
+      <Honesty />
+      <Plans />
+      <FinalCta />
+    </>
   );
 }
