@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
+import { AnalyticsGate, ConsentCard } from "@/components/consent/consent";
 import { themeInitScript } from "@/components/theme/theme-script";
 import { site } from "@/content/site";
 import "./globals.css";
@@ -50,7 +51,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Sets data-theme before first paint to avoid a light/dark flash. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <ConsentCard />
+        <AnalyticsGate />
+      </body>
     </html>
   );
 }

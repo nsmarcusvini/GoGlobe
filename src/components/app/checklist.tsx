@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState, useOptimistic, useTransition } from "react";
-import { saveItemNotes, toggleItem } from "@/app/(app)/app/actions";
+import { saveItemNotes, setItemDueDate, toggleItem } from "@/app/(app)/app/actions";
 import type { ActionState } from "@/app/admin/actions";
 import { appCopy } from "@/content/app";
+import { alertsCopy } from "@/content/billing";
 import { cn } from "@/lib/cn";
 
 export type ChecklistRow = {
@@ -11,6 +12,7 @@ export type ChecklistRow = {
   title: string;
   is_done: boolean;
   notes: string | null;
+  due_date?: string | null;
   source_url?: string | null;
   needs_translation?: boolean;
 };
@@ -22,10 +24,15 @@ export function ChecklistRoute({
   planId,
   title,
   items,
+  isPro = false,
+  today,
 }: {
   planId: string;
   title: string;
   items: ChecklistRow[];
+  isPro?: boolean;
+  /** YYYY-MM-DD (Brasília), to flag overdue items. */
+  today?: string;
 }) {
   const [optimistic, setDone] = useOptimistic(
     items,
@@ -93,6 +100,7 @@ export function ChecklistRoute({
             {item.needs_translation && (
               <p className="type-mono text-(--status-info)">{t.translation}</p>
             )}
+            {isPro && <DueDate planId={planId} item={item} today={today} />}
             <Notes planId={planId} item={item} />
           </li>
         ))}
@@ -147,5 +155,44 @@ function Notes({ planId, item }: { planId: string; item: ChecklistRow }) {
         </div>
       </form>
     </details>
+  );
+}
+
+function DueDate({ planId, item, today }: { planId: string; item: ChecklistRow; today?: string }) {
+  const [state, action, pending] = useActionState<ActionState, FormData>(
+    setItemDueDate.bind(null, item.id, planId),
+    { ok: false },
+  );
+  const overdue = !item.is_done && !!item.due_date && !!today && item.due_date < today;
+  return (
+    <form action={action} className="flex flex-wrap items-center gap-2">
+      <label
+        htmlFor={`due-${item.id}`}
+        className={cn(
+          "type-mono",
+          overdue ? "font-semibold text-(--status-fails)" : "text-ink-muted",
+        )}
+      >
+        {alertsCopy.due}
+        {overdue ? " · atrasado" : ""}
+      </label>
+      <input
+        id={`due-${item.id}`}
+        type="date"
+        name="due_date"
+        defaultValue={item.due_date ?? ""}
+        onChange={(e) => e.currentTarget.form?.requestSubmit()}
+        disabled={pending}
+        className="type-mono rounded-sm bg-surface px-2 py-1 shadow-[inset_0_0_0_1px_var(--line-strong)] focus:shadow-[inset_0_0_0_2px_var(--route)] focus:outline-none"
+      />
+      {state.message && (
+        <span
+          role={state.ok ? "status" : "alert"}
+          className={cn("type-mono", state.ok ? "text-green-ink" : "text-(--status-fails)")}
+        >
+          {state.message}
+        </span>
+      )}
+    </form>
   );
 }

@@ -55,9 +55,14 @@ export default async function AdminPathwaysPage() {
             verificação acima de 90 dias
           </p>
         </div>
-        <ButtonLink href="/admin/caminhos/novo" arrow>
-          Novo caminho
-        </ButtonLink>
+        <div className="flex flex-wrap gap-3">
+          <ButtonLink href="/admin/metricas" variant="secondary">
+            Métricas
+          </ButtonLink>
+          <ButtonLink href="/admin/caminhos/novo" arrow>
+            Novo caminho
+          </ButtonLink>
+        </div>
       </header>
 
       {["AU", "NZ", "CA", ...[...byCountry.keys()].filter((c) => !["AU", "NZ", "CA"].includes(c))]

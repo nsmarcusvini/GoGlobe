@@ -5,6 +5,10 @@ import { TextField } from "@/components/admin/controls";
 import { ButtonLink } from "@/components/ui/button";
 import { appCopy } from "@/content/app";
 import { QUESTIONS } from "@/content/onboarding";
+import { openBillingPortal } from "@/app/(marketing)/precos/actions";
+import { Button } from "@/components/ui/button";
+import { paymentsEnabled } from "@/lib/billing/config";
+import { getEntitlements } from "@/lib/billing/plan";
 import { requireUser } from "@/lib/data/user";
 
 export const metadata: Metadata = { title: "Conta" };
@@ -41,7 +45,19 @@ function answerLabel(questionId: string, value: unknown): string {
 }
 
 export default async function AccountPage() {
-  const { user, profile } = await requireUser("/app/conta");
+  const { supabase, user, profile } = await requireUser("/app/conta");
+  const [{ isPro }, { data: subscription }] = await Promise.all([
+    getEntitlements(supabase),
+    supabase
+      .from("subscriptions")
+      .select("billing_kind, status, current_period_end, stripe_customer_id")
+      .maybeSingle(),
+  ]);
+  const periodEnd = subscription?.current_period_end
+    ? new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(
+        new Date(subscription.current_period_end),
+      )
+    : null;
   const rows: Array<[string, string]> = [
     ["Data de nascimento", answerLabel("birth_date", profile.birth_date)],
     ["Estado civil", answerLabel("marital_status", profile.marital_status)],
@@ -94,6 +110,37 @@ export default async function AccountPage() {
             </div>
           ))}
         </dl>
+      </section>
+
+      <section
+        aria-labelledby="plan-title"
+        className="grid justify-items-start gap-4 border-t border-line pt-10"
+      >
+        <h2 id="plan-title" className="type-title">
+          Plano
+        </h2>
+        <p className="type-mono">
+          <span className={isPro ? "font-semibold text-green-ink" : "text-ink-muted"}>
+            {isPro ? "Pro" : "Gratuito"}
+          </span>
+          {isPro && subscription?.billing_kind === "pass" && periodEnd
+            ? ` · passe válido até ${periodEnd}`
+            : ""}
+          {isPro && subscription?.billing_kind === "subscription" && periodEnd
+            ? ` · renova em ${periodEnd}`
+            : ""}
+        </p>
+        {isPro && paymentsEnabled() && subscription?.stripe_customer_id ? (
+          <form action={openBillingPortal}>
+            <Button type="submit" variant="secondary">
+              Gerenciar assinatura
+            </Button>
+          </form>
+        ) : !isPro ? (
+          <ButtonLink href="/precos" variant="secondary" arrow>
+            Ver plano Pro
+          </ButtonLink>
+        ) : null}
       </section>
 
       <section

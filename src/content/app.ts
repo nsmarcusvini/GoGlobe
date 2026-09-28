@@ -6,6 +6,7 @@ export const appCopy = {
     profile: "Perfil",
     results: "Resultados",
     dashboard: "Painel",
+    compare: "Comparar",
     account: "Conta",
   },
   signOut: "Sair",

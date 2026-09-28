@@ -412,6 +412,55 @@
   }
 }
 
+/* ------------------------------------------------------------------------
+   Livro de Bordo (Phase 6): money as a travel ledger. Tabular mono figures,
+   hairline ruled rows, totals that roll like an odometer.
+   ------------------------------------------------------------------------ */
+.ledger-rules {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(3.5rem - 1px),
+    var(--line) calc(3.5rem - 1px),
+    var(--line) 3.5rem
+  );
+}
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Odometer: each digit is a column of 0-9 moved with translateY. */
+.odometer-digit {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  line-height: 1;
+  vertical-align: top;
+}
+.odometer-digit > span {
+  display: flex;
+  flex-direction: column;
+  transition: transform 900ms var(--ease-out-expo);
+}
+
+/* Side panel (fake door) and consent card entrances. */
+@keyframes panel-in {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+}
+
 /* Motion off means off: no reveals, no drawing, no camera. */
 @media (prefers-reduced-motion: reduce) {
   *,

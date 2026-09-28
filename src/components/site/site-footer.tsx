@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConsentSettingsButton } from "@/components/consent/consent";
 import { LegalNotice } from "@/components/legal-notice";
 import { Logo } from "@/components/logo";
 import { legalNotice } from "@/content/legal";
@@ -34,6 +35,9 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <ConsentSettingsButton className="link-route text-left text-[0.9375rem]" />
+              </li>
             </ul>
           </nav>
 

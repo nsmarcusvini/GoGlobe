@@ -38,6 +38,7 @@ export default async function AppLayout({ children }: LayoutProps<"/app">) {
       label: appCopy.rail.dashboard,
       done: (count ?? 0) > 0,
     },
+    { href: "/app/comparar", match: "/app/comparar", label: appCopy.rail.compare, done: false },
     { href: "/app/conta", match: "/app/conta", label: appCopy.rail.account, done: false },
   ];
 
