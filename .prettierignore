@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+coverage
+playwright-report
+test-results
+package-lock.json
+src/lib/database.types.ts
+supabase/.temp
+PROMPT_MVP_planejamento_migratorio.md.md
