@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { ComingSoon } from "@/components/site/coming-soon";
+import { upcoming } from "@/content/pages";
 
-export const metadata: Metadata = { title: "Política de privacidade", robots: { index: false } };
+const page = upcoming.privacy;
+
+export const metadata: Metadata = { title: page.title, robots: { index: false } };
 
 export default function Page() {
-  return <ComingSoon title="Política de privacidade" phase="Fase 6" />;
+  return <ComingSoon {...page} />;
 }

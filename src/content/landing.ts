@@ -13,7 +13,18 @@ export const landing = {
     primaryCta: "Criar meu perfil grátis",
     secondaryCta: "Ver como funciona",
     facts: ["Grátis para começar", "Sem cartão de crédito", "Tudo em português"],
-    origin: { coords: "15°47′S 47°52′W", label: "ponto de partida" },
+    origin: {
+      code: "BR",
+      capital: "Brasília",
+      coords: "15°47′S 47°52′W",
+      position: { lat: -15.7939, lon: -47.8828 },
+      label: "ponto de partida",
+    },
+    // Hero "flight plan": capital-to-capital distances, computed at render time.
+    ledger: {
+      caption: "Plano de rota",
+      note: "distância em linha reta entre capitais",
+    },
   },
 
   story: {
@@ -31,6 +42,7 @@ export const landing = {
         name: "Austrália",
         capital: "Canberra",
         coords: "35°17′S 149°08′E",
+        position: { lat: -35.2809, lon: 149.13 },
         authority: "Department of Home Affairs",
         sourceUrl: "https://immi.homeaffairs.gov.au/",
         body: "Organizamos em português os caminhos publicados pelo governo australiano para trabalho qualificado, estudo e residência, com cada requisito ligado à página oficial de onde ele saiu.",
@@ -42,6 +54,7 @@ export const landing = {
         name: "Nova Zelândia",
         capital: "Wellington",
         coords: "41°17′S 174°47′E",
+        position: { lat: -41.2865, lon: 174.7762 },
         authority: "Immigration New Zealand",
         sourceUrl: "https://www.immigration.govt.nz/",
         body: "Os critérios vêm do site da Immigration New Zealand. Mostramos o que está publicado e deixamos claro o que só pode ser confirmado caso a caso.",
@@ -53,6 +66,7 @@ export const landing = {
         name: "Canadá",
         capital: "Ottawa",
         coords: "45°25′N 75°42′W",
+        position: { lat: 45.4215, lon: -75.6972 },
         authority: "Immigration, Refugees and Citizenship Canada (IRCC)",
         sourceUrl: "https://www.canada.ca/en/immigration-refugees-citizenship.html",
         body: "Em programas com sistema de pontos, exibimos os critérios e o link para a calculadora oficial. Não recriamos a pontuação do governo.",
@@ -102,6 +116,7 @@ export const landing = {
   honesty: {
     eyebrow: "O que o GoGlobe não é",
     title: "Não somos consultoria.",
+    // Parallel statements, not a sequence: no numbering.
     points: [
       "Não dizemos qual visto é melhor para você.",
       "Não avaliamos suas chances de aprovação.",

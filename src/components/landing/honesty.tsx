@@ -28,8 +28,8 @@ export function Honesty() {
                 index={i}
                 className="flex items-baseline gap-5 border-t border-current/20 py-6 last:border-b"
               >
-                <span aria-hidden="true" className="type-mono shrink-0 opacity-70">
-                  ✕ 0{i + 1}
+                <span aria-hidden="true" className="type-mono shrink-0 text-base opacity-70">
+                  ✕
                 </span>
                 <span className="type-title">{point}</span>
               </Reveal>

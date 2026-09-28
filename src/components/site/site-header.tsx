@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
+import { MobileNav } from "@/components/site/mobile-nav";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { ButtonLink } from "@/components/ui/button";
 import { ui } from "@/content/ui";
+
+const links = [
+  { href: "/#paises", label: ui.nav.countries },
+  { href: "/#como-funciona", label: ui.nav.howItWorks },
+  { href: "/precos", label: ui.nav.pricing },
+];
 
 export function SiteHeader() {
   return (
@@ -16,15 +23,15 @@ export function SiteHeader() {
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Logo priority />
         <nav aria-label="Principal" className="hidden items-center gap-8 whitespace-nowrap lg:flex">
-          <Link href="/#paises" className="link-route text-[0.9375rem] font-medium">
-            {ui.nav.countries}
-          </Link>
-          <Link href="/#como-funciona" className="link-route text-[0.9375rem] font-medium">
-            Como funciona
-          </Link>
-          <Link href="/precos" className="link-route text-[0.9375rem] font-medium">
-            {ui.nav.pricing}
-          </Link>
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="link-route text-[0.9375rem] font-medium"
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
         <div className="flex items-center gap-1 sm:gap-3">
           <ThemeToggle />
@@ -34,9 +41,10 @@ export function SiteHeader() {
           >
             {ui.nav.signIn}
           </Link>
-          <ButtonLink href="/app/onboarding" size="md" className="h-10 px-4">
+          <ButtonLink href="/app/onboarding" size="md" className="h-10 px-4 max-sm:hidden">
             {ui.nav.cta}
           </ButtonLink>
+          <MobileNav links={links} />
         </div>
       </div>
     </header>

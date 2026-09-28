@@ -12,6 +12,9 @@ export const ui = {
   nav: {
     home: "Início",
     countries: "Países",
+    howItWorks: "Como funciona",
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
     pricing: "Preços",
     about: "Sobre",
     signIn: "Entrar",

@@ -1,5 +1,6 @@
 import { ButtonLink } from "@/components/ui/button";
 import { landing } from "@/content/landing";
+import { RouteLedger } from "./route-ledger";
 
 const { hero } = landing;
 
@@ -36,7 +37,7 @@ export function Hero() {
             aria-hidden="true"
             viewBox="0 0 1000 400"
             preserveAspectRatio="none"
-            className="pointer-events-none absolute -inset-x-[var(--gutter)] -top-[10%] -bottom-[25%] z-0 h-[135%] w-[calc(100%+2*var(--gutter))] overflow-visible"
+            className="pointer-events-none absolute -inset-x-[var(--gutter)] -top-[10%] -bottom-[25%] z-0 h-[135%] w-[calc(100%+2*var(--gutter))] overflow-visible lg:-bottom-[12%] lg:h-[122%]"
           >
             <path
               d="M0 390 C 170 390, 250 300, 380 250 S 640 215, 760 160 S 930 40, 1000 0"
@@ -61,18 +62,8 @@ export function Hero() {
           </svg>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-end">
-          <div className="type-mono flex items-center gap-3 text-ink-muted max-lg:order-last">
-            <span className="relative grid size-3 place-items-center">
-              <span className="absolute inset-0 animate-ping rounded-full bg-route opacity-40" />
-              <span className="size-3 rounded-full bg-route" />
-            </span>
-            <span>
-              {hero.origin.coords} · {hero.origin.label}
-            </span>
-          </div>
-
-          <div className="grid gap-8 lg:pl-[2vw]">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-end lg:gap-16 xl:gap-24">
+          <div className="grid gap-8">
             <p className="type-lead max-w-[46ch] text-ink">{hero.lead}</p>
             <div className="flex flex-wrap items-center gap-3">
               <ButtonLink href="/app/onboarding" size="lg" arrow>
@@ -91,6 +82,8 @@ export function Hero() {
               ))}
             </ul>
           </div>
+
+          <RouteLedger className="animate-[fade-up_900ms_var(--ease-out-expo)_1400ms_both] lg:max-w-[34rem] lg:justify-self-end" />
         </div>
       </div>
     </section>

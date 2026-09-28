@@ -14,7 +14,11 @@ function Check() {
 
 export function Plans() {
   return (
-    <section aria-labelledby="plans-title" className="border-b border-line py-(--space-section)">
+    <section
+      id="planos"
+      aria-labelledby="plans-title"
+      className="border-b border-line py-(--space-section)"
+    >
       <div className="container-page grid gap-14">
         <div className="grid gap-5 lg:max-w-[70%]">
           <p className="type-eyebrow">{plans.eyebrow}</p>
