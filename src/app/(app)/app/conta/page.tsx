@@ -9,6 +9,8 @@ import { openBillingPortal } from "@/app/(marketing)/precos/actions";
 import { Button } from "@/components/ui/button";
 import { paymentsEnabled } from "@/lib/billing/config";
 import { getEntitlements } from "@/lib/billing/plan";
+import { syncCheckoutSession } from "@/lib/billing/sync";
+import { checkoutCopy } from "@/content/billing";
 import { requireUser } from "@/lib/data/user";
 
 export const metadata: Metadata = { title: "Conta" };
@@ -44,8 +46,13 @@ function answerLabel(questionId: string, value: unknown): string {
   return String(value);
 }
 
-export default async function AccountPage() {
+export default async function AccountPage({ searchParams }: PageProps<"/app/conta">) {
+  const params = await searchParams;
   const { supabase, user, profile } = await requireUser("/app/conta");
+  // Back from Stripe Checkout: confirm the purchase now instead of waiting for the webhook.
+  const sessionId = typeof params.session_id === "string" ? params.session_id : null;
+  const checkout =
+    params.assinatura === "ok" && sessionId ? await syncCheckoutSession(sessionId, user.id) : null;
   const [{ isPro }, { data: subscription }] = await Promise.all([
     getEntitlements(supabase),
     supabase
@@ -119,6 +126,26 @@ export default async function AccountPage() {
         <h2 id="plan-title" className="type-title">
           Plano
         </h2>
+        {checkout && (
+          <p
+            role="status"
+            className={
+              checkout === "active"
+                ? "rounded-md border-l-2 border-route bg-(--status-meets-bg) p-5 font-medium"
+                : "rounded-md border-l-2 border-(--status-info) bg-(--status-info-bg) p-5 font-medium"
+            }
+          >
+            {checkoutCopy[checkout]}
+          </p>
+        )}
+        {params.erro === "portal" && (
+          <p
+            role="alert"
+            className="rounded-md border-l-2 border-(--status-info) bg-(--status-info-bg) p-5 font-medium"
+          >
+            {checkoutCopy.portal}
+          </p>
+        )}
         <p className="type-mono">
           <span className={isPro ? "font-semibold text-green-ink" : "text-ink-muted"}>
             {isPro ? "Pro" : "Gratuito"}

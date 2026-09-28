@@ -64,24 +64,41 @@ export async function startCheckout(formData: FormData): Promise<void> {
   const site = publicEnv().NEXT_PUBLIC_SITE_URL;
   const isSubscription = kind.data === "monthly";
   const metadata = { user_id: user.id, price_id: price };
-  const session = await stripe.checkout.sessions.create({
-    mode: isSubscription ? "subscription" : "payment",
-    line_items: [{ price, quantity: 1 }],
-    client_reference_id: user.id,
-    customer_email: user.email,
-    metadata,
-    locale: "pt-BR",
-    // Pix only for the one-off pass, and only once enabled on the Stripe account.
-    payment_method_types:
-      !isSubscription && process.env.STRIPE_PIX_ENABLED === "true" ? ["card", "pix"] : ["card"],
-    ...(isSubscription ? { subscription_data: { metadata } } : {}),
-    success_url: `${site}/app/conta?assinatura=ok`,
-    cancel_url: `${site}/precos?checkout=cancelado`,
-  });
+  const create = (methods: ("card" | "pix")[]) =>
+    stripe.checkout.sessions.create({
+      mode: isSubscription ? "subscription" : "payment",
+      line_items: [{ price, quantity: 1 }],
+      client_reference_id: user.id,
+      customer_email: user.email,
+      metadata,
+      locale: "pt-BR",
+      payment_method_types: methods,
+      ...(isSubscription ? { subscription_data: { metadata } } : {}),
+      // session_id lets /app/conta confirm the purchase without waiting for the webhook.
+      success_url: `${site}/app/conta?assinatura=ok&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${site}/precos?checkout=cancelado`,
+    });
 
+  // Pix only for the one-off pass, and only when enabled. If the Stripe
+  // account rejects it (not activated yet), fall back to card instead of failing.
+  const withPix = !isSubscription && process.env.STRIPE_PIX_ENABLED === "true";
+  let url: string | null = null;
+  try {
+    url = (await create(withPix ? ["card", "pix"] : ["card"])).url;
+  } catch (error) {
+    console.error("[checkout]", error instanceof Error ? error.message : error);
+    if (withPix) {
+      try {
+        url = (await create(["card"])).url;
+      } catch (retryError) {
+        console.error("[checkout]", retryError instanceof Error ? retryError.message : retryError);
+      }
+    }
+  }
+
+  if (!url) redirect("/precos?erro=checkout");
   await track("checkout_started", { userId: user.id, props: { kind: kind.data } });
-  if (!session.url) redirect("/precos?erro=checkout");
-  redirect(session.url);
+  redirect(url);
 }
 
 /** Stripe Customer Portal: manage card, cancel, invoices. */

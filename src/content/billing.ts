@@ -23,6 +23,22 @@ export const pricingCopy = {
     "O plano Pro organiza mais informação e ferramentas de acompanhamento. Ele não inclui aconselhamento migratório nem aumenta chances de aprovação.",
 } as const;
 
+// Return from Stripe Checkout and pricing errors.
+export const checkoutCopy = {
+  active: "Pagamento confirmado. O plano Pro já está ativo na sua conta.",
+  pending:
+    "Recebemos o seu pedido. O Pro é ativado assim que o pagamento for confirmado (no Pix, pode levar alguns minutos).",
+  invalid:
+    "Não conseguimos confirmar este pagamento agora. Se você foi cobrado, o plano é ativado automaticamente em alguns minutos.",
+  portal: "Não foi possível abrir o gerenciamento da assinatura agora. Tente de novo em instantes.",
+  errors: {
+    checkout:
+      "Não foi possível abrir o pagamento agora. Nada foi cobrado. Tente de novo em instantes.",
+    configuracao: "Os pagamentos estão temporariamente indisponíveis. Nada foi cobrado.",
+    limite: "Muitas tentativas seguidas. Aguarde alguns minutos e tente de novo.",
+  },
+} as const;
+
 export const waitlistCopy = {
   eyebrow: "Plano Pro",
   title: "Os pagamentos ainda não estão abertos.",

@@ -3,7 +3,7 @@ import { startCheckout } from "@/app/(marketing)/precos/actions";
 import { FeatureRoute } from "@/components/billing/feature-route";
 import { WaitlistTrigger } from "@/components/billing/waitlist-panel";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { pricingCopy as t } from "@/content/billing";
+import { checkoutCopy, pricingCopy as t } from "@/content/billing";
 import { FEATURES, paymentsEnabled, PRICES } from "@/lib/billing/config";
 
 export const metadata: Metadata = {
@@ -53,6 +53,14 @@ export default async function PricingPage({ searchParams }: PageProps<"/precos">
             className="rounded-md border-l-2 border-(--status-info) bg-(--status-info-bg) p-5 font-medium"
           >
             {t.limitReached}
+          </p>
+        )}
+        {typeof params.erro === "string" && params.erro in checkoutCopy.errors && (
+          <p
+            role="alert"
+            className="rounded-md border-l-2 border-(--status-info) bg-(--status-info-bg) p-5 font-medium"
+          >
+            {checkoutCopy.errors[params.erro as keyof typeof checkoutCopy.errors]}
           </p>
         )}
         {params.checkout === "cancelado" && (

@@ -31,7 +31,10 @@ export type SubscriptionLike = {
   status: string;
   customer: string | { id: string };
   metadata: Record<string, string> | null;
-  items: { data: Array<{ current_period_end: Unix; price: { id: string } }> };
+  // Accounts pinned to API versions before 2025-03-31 send the period end on
+  // the subscription itself instead of on each item: accept both.
+  current_period_end?: Unix;
+  items: { data: Array<{ current_period_end?: Unix; price: { id: string } }> };
 };
 export type StripeEventLike =
   | {
@@ -119,7 +122,11 @@ export function subscriptionUpdateFromEvent(
   if (event.type.startsWith("customer.subscription.")) {
     const subscription = event.data.object as SubscriptionLike;
     const deleted = event.type === "customer.subscription.deleted";
-    const periodEnd = Math.max(0, ...subscription.items.data.map((i) => i.current_period_end));
+    const periodEnd = Math.max(
+      0,
+      subscription.current_period_end ?? 0,
+      ...subscription.items.data.map((i) => i.current_period_end ?? 0),
+    );
     const status = deleted ? "canceled" : subscription.status;
     const patch: Partial<SubscriptionPatch> = {
       plan: !deleted && PRO_STATUSES.has(subscription.status) ? "pro" : "free",

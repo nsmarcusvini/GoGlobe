@@ -116,6 +116,16 @@ describe("subscriptionUpdateFromEvent", () => {
     expect(update?.patch.plan).toBe("free");
   });
 
+  it("reads the period end from older API versions (on the subscription)", () => {
+    const event = subscription("customer.subscription.updated");
+    const object = event.data.object as unknown as Record<string, unknown>;
+    object.current_period_end = 1_900_000_000;
+    object.items = { data: [{ price: { id: "price_monthly" } }] };
+    expect(subscriptionUpdateFromEvent(event, opts)?.patch.current_period_end).toBe(
+      new Date(1_900_000_000 * 1000).toISOString(),
+    );
+  });
+
   it("deleted subscription goes back to free", () => {
     const update = subscriptionUpdateFromEvent(subscription("customer.subscription.deleted"), opts);
     expect(update?.patch).toMatchObject({ plan: "free", status: "canceled" });
