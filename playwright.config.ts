@@ -12,6 +12,23 @@ export default defineConfig({
   use: {
     baseURL,
     locale: "pt-BR",
+    // Consent already answered, so the corner card never covers other tests.
+    // e2e/consent.spec.ts starts from a clean state to test the card itself.
+    storageState: {
+      cookies: [
+        {
+          name: "gg_consent",
+          value: "rejected",
+          domain: "localhost",
+          path: "/",
+          expires: -1,
+          httpOnly: false,
+          secure: false,
+          sameSite: "Lax",
+        },
+      ],
+      origins: [],
+    },
     trace: "on-first-retry",
   },
   projects: [

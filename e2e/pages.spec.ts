@@ -10,9 +10,10 @@ test("unknown route shows the off-route page with a way back", async ({ page }) 
 });
 
 test("under-construction page says what it will hold", async ({ page }) => {
-  await page.goto("/precos");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Planos e preços");
-  await expect(page.getByText("Trecho em construção · Fase 6")).toBeVisible();
+  // /precos became a real page in Phase 6; /termos is still under construction.
+  await page.goto("/termos");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Termos de uso");
+  await expect(page.getByText("Trecho em construção · Fase 5")).toBeVisible();
 });
 
 test("hero route ledger lists every destination", async ({ page }) => {

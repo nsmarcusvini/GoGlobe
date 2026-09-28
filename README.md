@@ -85,6 +85,30 @@ Criado com a skill `/sites-incriveis`, herdando a Rota Traçada. O app é a pró
 - **Páginas públicas com SEO:** `/paises/[pais]` e `/caminhos/[pais]/[slug]` geradas do banco com ISR (1 h), metadata, canonical, Open Graph, JSON-LD de breadcrumb, `sitemap.xml` e `robots.txt`.
 - **E2E da jornada completa** (`e2e/app-flow.spec.ts`): cadastro → onboarding → resultados → acompanhar → marcar item → exportar → excluir. Roda localmente com o Supabase no ar e no CI num job próprio.
 
+## Monetização e analytics (Fase 6, direção "Livro de Bordo")
+
+- **Planos** (`/precos`): Gratuito e Pro (R$ 29/mês ou R$ 129 pelo passe de 6 meses; valores exibidos vêm de `PRO_PRICE_MONTHLY_BRL` / `PRO_PRICE_PASS_BRL`).
+- **Limites no banco:** o plano gratuito acompanha 1 caminho (gatilho `enforce_free_plan_limit`); prazos no checklist são só do Pro (`enforce_pro_fields`). `is_pro()` considera assinatura ativa ou passe dentro da validade. Provado por `supabase/tests/database/monetization.test.sql`.
+- **Recursos Pro:** comparador (`/app/comparar`, até 3 caminhos com rotas sobrepostas), simulador de custos em livro-caixa com linhas próprias, prazos por item e alertas de mudança (a partir de `content_changes`, via `pathway_changes_since`).
+- **`PAYMENTS_ENABLED=false` (padrão):** "Assinar" abre o painel da lista de espera (fake door), grava em `waitlist` e registra `pro_interest`.
+- **`PAYMENTS_ENABLED=true`:** Stripe Checkout (mensal = assinatura; passe = pagamento único, com Pix se `STRIPE_PIX_ENABLED=true`), portal do cliente em Conta e webhook em `/api/stripe/webhook` (assinatura verificada, idempotente por `stripe_events`, único escritor de `subscriptions`).
+
+### Ativar o Stripe
+
+1. Crie dois produtos/preços em BRL: mensal recorrente (R$ 29) e pagamento único (R$ 129). Copie os IDs para `STRIPE_PRICE_PRO_MONTHLY` e `STRIPE_PRICE_PRO_6MONTHS`.
+2. Webhook apontando para `https://<domínio>/api/stripe/webhook` com os eventos `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.created`, `customer.subscription.updated` e `customer.subscription.deleted`. Copie o segredo para `STRIPE_WEBHOOK_SECRET`.
+3. Local: `stripe listen --forward-to localhost:3000/api/stripe/webhook` (Stripe CLI) e cartão de teste `4242 4242 4242 4242`.
+4. Pix: habilite na conta Stripe e defina `STRIPE_PIX_ENABLED=true` (vale só para o passe; assinaturas mensais usam cartão).
+5. Ligue `PAYMENTS_ENABLED=true`.
+
+### Analytics e LGPD
+
+- Eventos próprios na tabela `events` (sem terceiros), gravados no servidor **só com consentimento** (cookie `gg_consent`). Vercel Analytics também só carrega após o aceite.
+- Cartão de consentimento com "Aceitar" e "Recusar" de mesmo peso; "Preferências de cookies" no rodapé reabre a escolha.
+- `/admin/metricas`: funil (pessoas distintas por etapa) e retenção semanal por coorte.
+- Rate limit em Postgres (`hit_rate_limit`) na lista de espera, checkout e `/api/events`.
+- `/privacidade`: rascunho da política, **pendente de revisão jurídica**; razão social/CNPJ e e-mail do encarregado aparecem marcados como pendentes.
+
 ## Estrutura
 
 ```

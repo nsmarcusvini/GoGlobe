@@ -98,6 +98,16 @@ test("new user goes from sign-up to a ticked checklist item", async ({ page }, t
   await page.reload();
   await expect(page.getByRole("checkbox").first()).toHaveAttribute("aria-checked", "true");
 
+  // Free plan: a second pathway is blocked by the database and leads to pricing.
+  await page.goto("/app/caminhos/skilled-nominated-190");
+  await page.getByRole("button", { name: "Acompanhar este caminho" }).click();
+  await expect(page).toHaveURL(/\/precos\?limite=1$/);
+  await expect(page.getByText(/limite do plano gratuito/)).toBeVisible();
+
+  // Pro-only tools stay locked for a free account.
+  await page.goto("/app/comparar?c=skilled-independent-189&c=skilled-nominated-190");
+  await expect(page.getByText("O comparador é um recurso do plano Pro.")).toBeVisible();
+
   // Dashboard shows the followed route.
   await page.goto("/app/painel");
   await expect(
