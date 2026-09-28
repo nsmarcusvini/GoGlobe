@@ -52,3 +52,20 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  database:
+    name: Migrations, seed and RLS tests (pgTAP)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Postgres with migrations and seed
+        run: supabase db start
+
+      - name: RLS and schema tests
+        run: supabase test db

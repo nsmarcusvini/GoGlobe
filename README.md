@@ -53,6 +53,9 @@ O app roda em http://localhost:3000, e o Supabase Studio local em http://localho
 | `npm run db:start/stop` | Sobe/derruba o Supabase local                              |
 | `npm run db:reset`      | Recria o banco **local** aplicando migrations e `seed.sql` |
 | `npm run db:types`      | Gera `src/lib/database.types.ts` a partir do banco local   |
+| `npm run db:test`       | Testes pgTAP de RLS e schema (`supabase/tests/`)           |
+| `npm run check-sources` | Links das fontes, conteúdo com +90 dias e regras inválidas |
+| `npm run make-admin`    | Dá papel de admin a um e-mail (`-- pessoa@exemplo.com`)    |
 
 Na primeira vez que rodar o E2E: `npx playwright install chromium`.
 
@@ -96,9 +99,31 @@ e2e/                    # testes Playwright
 
 ## Banco de dados
 
-- As migrations ficam em `supabase/migrations/`. Crie com `npx supabase migration new <nome>` e teste localmente com `npm run db:reset`.
-- Depois de mudar o schema, rode `npm run db:types`.
-- **Projeto remoto:** `flwtpxqcpdwpbdjdiydb`. Para vincular: `npx supabase link --project-ref flwtpxqcpdwpbdjdiydb`. Só aplique migrations no remoto (`npx supabase db push`) depois de testar localmente e com aprovação explícita.
+- **Migrations** em `supabase/migrations/`. Crie com `npx supabase migration new <nome>` e teste com `npm run db:reset` (recria o banco **local** com migrations e `seed.sql`).
+- Depois de mudar o schema: `npm run db:types` e `npm run db:test`.
+- **Conteúdo × usuário:** tabelas de conteúdo (`countries`, `pathways`, `requirements`, `pathway_steps`, `documents`, `cost_items`, `occupations`, `exchange_rates`) têm leitura pública só do que está publicado e escrita só para admin. Tabelas de usuário (`profiles`, `user_plans`, `checklist_items`, `subscriptions`, `ai_usage`) só são acessíveis pelo dono. `subscriptions`, `ai_usage` e `waitlist` só são escritas pelo servidor (service role).
+- **RLS provada por testes:** `supabase/tests/database/rls.test.sql` (36 asserções) roda no CI a cada push.
+- **Log e versões:** toda edição de conteúdo vai para `content_changes` (quem, quando, campos, antes/depois). Mudança substantiva num caminho publicado incrementa `pathways.version`; só reverificar não incrementa. Isso alimenta os alertas do plano Pro.
+- **Projeto remoto:** `flwtpxqcpdwpbdjdiydb`. Para vincular: `npx supabase login` e `npx supabase link --project-ref flwtpxqcpdwpbdjdiydb`. Só aplique migrations no remoto (`npx supabase db push`) depois de testar localmente e **com aprovação explícita**.
+
+## Curadoria de conteúdo (admin)
+
+1. Dê papel de admin a um e-mail: `npm run make-admin -- voce@exemplo.com` (usa a service role do `.env.local`; no ambiente local o e-mail chega no Mailpit, em http://127.0.0.1:54324).
+2. Entre em `/admin/entrar` e abra o link recebido. `/admin` lista os caminhos por país, com status, versão e data de verificação.
+3. No editor de cada caminho:
+   - edite os dados e os itens (requisitos, etapas, documentos, custos). **Toda informação precisa da URL oficial de onde saiu.**
+   - A regra de cada requisito é um JSON validado ao vivo pelo mesmo schema do servidor (`src/lib/eligibility/rules.ts`); há exemplos de cada operador no próprio editor.
+   - Depois de conferir a página oficial, use **"Marcar como verificado hoje"**.
+   - Publique só o que foi verificado (o banco impede publicar sem data de verificação). O que não der para confirmar fica como **rascunho**, com o motivo no campo interno.
+4. Rode `npm run check-sources` periodicamente: aponta links quebrados, itens verificados há mais de 90 dias e regras inválidas (sai com código 1 se houver problema). Alguns sites do governo bloqueiam acesso automatizado; esses aparecem como AVISO para conferir no navegador.
+
+### Conteúdo inicial
+
+O seed tem 16 caminhos verificados nos sites oficiais em 28/09/2026: Austrália (189, 190, 491, 482 Core Skills, 500, 462), Nova Zelândia (Skilled Migrant, AEWV, estudante, Working Holiday Brasil) e Canadá (FSW, CEC, FST, PNP, study permit, PGWP). Pendências conhecidas:
+
+- **Custos típicos** (não governamentais) não foram cadastrados: não há fonte oficial para verificá-los.
+- **Cotação do NZD:** a PTAX do Banco Central não inclui NZD. AUD e CAD usam a PTAX de 25/09/2026.
+- **Listas de ocupações** não foram importadas; os requisitos de ocupação são de verificação manual, com link para a lista oficial.
 
 ## Deploy (Vercel)
 
