@@ -399,6 +399,19 @@
   }
 }
 
+/* Journey routes draw up to their progress (--p, 0..1) on load. */
+.journey-route {
+  animation: journey-draw 1800ms var(--ease-in-out-quart) both;
+}
+@keyframes journey-draw {
+  from {
+    stroke-dashoffset: var(--p, 1);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* Motion off means off: no reveals, no drawing, no camera. */
 @media (prefers-reduced-motion: reduce) {
   *,
