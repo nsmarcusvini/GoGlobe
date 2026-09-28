@@ -292,6 +292,39 @@ export type Database = {
           },
         ];
       };
+      events: {
+        Row: {
+          anonymous_id: string | null;
+          created_at: string;
+          id: string;
+          name: string;
+          path: string | null;
+          props: NonNullable<Json>;
+          updated_at: string;
+          user_id: string | null;
+        };
+        Insert: {
+          anonymous_id?: string | null;
+          created_at?: string;
+          id?: string;
+          name: string;
+          path?: string | null;
+          props?: NonNullable<Json>;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          anonymous_id?: string | null;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          path?: string | null;
+          props?: NonNullable<Json>;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
       exchange_rates: {
         Row: {
           brl_rate: number;
@@ -552,6 +585,30 @@ export type Database = {
           },
         ];
       };
+      rate_limits: {
+        Row: {
+          created_at: string;
+          hits: number;
+          key: string;
+          updated_at: string;
+          window_start: string;
+        };
+        Insert: {
+          created_at?: string;
+          hits?: number;
+          key: string;
+          updated_at?: string;
+          window_start: string;
+        };
+        Update: {
+          created_at?: string;
+          hits?: number;
+          key?: string;
+          updated_at?: string;
+          window_start?: string;
+        };
+        Relationships: [];
+      };
       requirements: {
         Row: {
           created_at: string;
@@ -605,36 +662,66 @@ export type Database = {
           },
         ];
       };
+      stripe_events: {
+        Row: {
+          created_at: string;
+          id: string;
+          processed_at: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          processed_at?: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          processed_at?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       subscriptions: {
         Row: {
+          billing_kind: string | null;
           created_at: string;
           current_period_end: string | null;
           id: string;
           plan: Database["public"]["Enums"]["subscription_plan"];
           status: string | null;
           stripe_customer_id: string | null;
+          stripe_price_id: string | null;
           stripe_subscription_id: string | null;
           updated_at: string;
           user_id: string;
         };
         Insert: {
+          billing_kind?: string | null;
           created_at?: string;
           current_period_end?: string | null;
           id?: string;
           plan?: Database["public"]["Enums"]["subscription_plan"];
           status?: string | null;
           stripe_customer_id?: string | null;
+          stripe_price_id?: string | null;
           stripe_subscription_id?: string | null;
           updated_at?: string;
           user_id: string;
         };
         Update: {
+          billing_kind?: string | null;
           created_at?: string;
           current_period_end?: string | null;
           id?: string;
           plan?: Database["public"]["Enums"]["subscription_plan"];
           status?: string | null;
           stripe_customer_id?: string | null;
+          stripe_price_id?: string | null;
           stripe_subscription_id?: string | null;
           updated_at?: string;
           user_id?: string;
@@ -648,6 +735,7 @@ export type Database = {
           notes: string | null;
           pathway_id: string;
           pathway_version: number;
+          simulator: NonNullable<Json>;
           status: Database["public"]["Enums"]["plan_status"];
           updated_at: string;
           user_id: string;
@@ -658,6 +746,7 @@ export type Database = {
           notes?: string | null;
           pathway_id: string;
           pathway_version?: number;
+          simulator?: NonNullable<Json>;
           status?: Database["public"]["Enums"]["plan_status"];
           updated_at?: string;
           user_id: string;
@@ -668,6 +757,7 @@ export type Database = {
           notes?: string | null;
           pathway_id?: string;
           pathway_version?: number;
+          simulator?: NonNullable<Json>;
           status?: Database["public"]["Enums"]["plan_status"];
           updated_at?: string;
           user_id?: string;
@@ -711,7 +801,37 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_funnel: {
+        Args: { p_days?: number };
+        Returns: {
+          people: number;
+          step: string;
+        }[];
+      };
+      admin_retention: {
+        Args: { p_weeks?: number };
+        Returns: {
+          active: number;
+          cohort: string;
+          size: number;
+          week: number;
+        }[];
+      };
+      hit_rate_limit: {
+        Args: { p_key: string; p_limit: number; p_window_seconds: number };
+        Returns: boolean;
+      };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_pro: { Args: { target?: string }; Returns: boolean };
+      pathway_changes_since: {
+        Args: { p_pathway: string; p_since: string };
+        Returns: {
+          action: string;
+          changed_at: string;
+          changed_fields: string[];
+          table_name: string;
+        }[];
+      };
     };
     Enums: {
       checklist_source: "step" | "document" | "custom";
