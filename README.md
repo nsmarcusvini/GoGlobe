@@ -56,6 +56,18 @@ O app roda em http://localhost:3000, e o Supabase Studio local em http://localho
 
 Na primeira vez que rodar o E2E: `npx playwright install chromium`.
 
+## Design: direção "Rota Traçada"
+
+Criado com a skill `/sites-incriveis` (Fase 2). A página inicial é uma carta de navegação clara, sobre a qual uma rota se desenha do Brasil até cada país. Os tokens (cores da marca, tipografia, espaços, easing, sombras, tema claro e escuro) ficam em `src/app/globals.css`, com as decisões de direção de arte comentadas no topo.
+
+- **Fontes:** Bricolage Grotesque (display e corpo) + JetBrains Mono (coordenadas, códigos, datas de verificação), servidas localmente por `next/font`.
+- **Componentes-base:** `src/components/ui/` (botão, campo, status de requisito, progresso em rota, bloco de fonte oficial, card de caminho) e `<LegalNotice />`.
+- **Vitrine:** `/design` (não indexada) mostra todos os componentes nos dois temas.
+- **Mapa:** gerado a partir do Natural Earth (domínio público) por `npm run map:build`. Terra e grade viram SVGs estáticos em `public/map/`; países e cidades ficam em `src/components/map/world-map-data.ts`.
+- **Logo:** `npm run brand:logo` recorta `brand/logo-original.png` e gera a versão transparente e os ícones. **Pendente:** logo oficial em SVG.
+- **Movimento:** `prefers-reduced-motion` desliga reveals, desenho de rota e câmera.
+- **Textos:** centralizados em `src/content/` e marcados como rascunho até a revisão do fundador.
+
 ## Estrutura
 
 ```
