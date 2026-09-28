@@ -482,6 +482,7 @@ export type Database = {
           created_at: string;
           education_level: Database["public"]["Enums"]["education_level"] | null;
           english_level: Database["public"]["Enums"]["english_level"] | null;
+          english_lowest_component: number | null;
           english_score: number | null;
           english_test: Database["public"]["Enums"]["english_test"] | null;
           goal: Database["public"]["Enums"]["user_goal"] | null;
@@ -503,6 +504,7 @@ export type Database = {
           created_at?: string;
           education_level?: Database["public"]["Enums"]["education_level"] | null;
           english_level?: Database["public"]["Enums"]["english_level"] | null;
+          english_lowest_component?: number | null;
           english_score?: number | null;
           english_test?: Database["public"]["Enums"]["english_test"] | null;
           goal?: Database["public"]["Enums"]["user_goal"] | null;
@@ -524,6 +526,7 @@ export type Database = {
           created_at?: string;
           education_level?: Database["public"]["Enums"]["education_level"] | null;
           english_level?: Database["public"]["Enums"]["english_level"] | null;
+          english_lowest_component?: number | null;
           english_score?: number | null;
           english_test?: Database["public"]["Enums"]["english_test"] | null;
           goal?: Database["public"]["Enums"]["user_goal"] | null;

@@ -31,8 +31,22 @@ export async function updateSession(request: NextRequest) {
   );
 
   // Do not add logic between client creation and getClaims(): it revalidates the JWT
-  // and triggers the cookie refresh above. Route protection is added in Phase 5.
-  await supabase.auth.getClaims();
+  // and triggers the cookie refresh above.
+  const { data } = await supabase.auth.getClaims();
+
+  // Optimistic guard for the logged-in app. Pages and Server Actions still
+  // check the user themselves; RLS is the real boundary.
+  const { pathname, search } = request.nextUrl;
+  if (!data?.claims && (pathname === "/app" || pathname.startsWith("/app/"))) {
+    const signIn = request.nextUrl.clone();
+    signIn.pathname = "/entrar";
+    signIn.search = "";
+    signIn.searchParams.set("next", `${pathname}${search}`);
+    const redirect = NextResponse.redirect(signIn);
+    // Keep any refreshed auth cookies on the redirect.
+    for (const cookie of response.cookies.getAll()) redirect.cookies.set(cookie);
+    return redirect;
+  }
 
   return response;
 }
