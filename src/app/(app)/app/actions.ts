@@ -49,7 +49,9 @@ export async function completeOnboarding() {
     .eq("user_id", user.id);
   await track("onboarding_completed", { userId: user.id });
   revalidatePath("/app", "layout");
-  redirect("/app/resultados");
+  // Pro members go back to their Base; everyone else sees the results first.
+  const { data: isPro } = await supabase.rpc("is_pro", {});
+  redirect(isPro === true ? "/app/base" : "/app/resultados");
 }
 
 // ------------------------------------------------------------------- plans --
@@ -129,6 +131,7 @@ export async function toggleItem(
   if (done) await track("checklist_item_done", { userId: user.id });
   revalidatePath(`/app/planos/${planId}`);
   revalidatePath("/app/painel");
+  revalidatePath("/app/base");
   return { ok: true };
 }
 
@@ -137,7 +140,7 @@ const DueInput = z.object({
     (v) => (v === "" || v === null ? null : v),
     z
       .string()
-      .regex(/^d{4}-d{2}-d{2}$/, "Data inválida.")
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida.")
       .nullable(),
   ),
 });
