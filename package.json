@@ -26,7 +26,8 @@
     "make-admin": "node scripts/make-admin.ts",
     "test:coverage": "vitest run --coverage",
     "eligibility:examples": "node scripts/eligibility-examples.ts",
-    "ingest": "node scripts/ingest-sources.ts"
+    "ingest": "node scripts/ingest-sources.ts",
+    "ai:report": "node scripts/ai-report.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.129.0",

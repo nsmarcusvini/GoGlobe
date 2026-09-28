@@ -1,7 +1,9 @@
-import "server-only";
+// No "server-only" here so scripts/ai-report.ts can run the same model code;
+// the app reaches it only through lib/ai/server.ts, which is server-only. The
+// API key is always passed in, never read from the environment here.
 import Anthropic from "@anthropic-ai/sdk";
-import { isAdviceRequest, PROFESSIONALS } from "./guard";
-import { SYSTEM_PROMPT, type ChatTurn, type SourceChunk } from "./prompt";
+import { isAdviceRequest, PROFESSIONALS } from "./guard.ts";
+import { SYSTEM_PROMPT, type ChatTurn, type SourceChunk } from "./prompt.ts";
 
 export const DEFAULT_MODEL = "claude-opus-5-5";
 

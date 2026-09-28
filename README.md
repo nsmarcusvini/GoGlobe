@@ -40,22 +40,24 @@ O app roda em http://localhost:3000, e o Supabase Studio local em http://localho
 
 ## Scripts
 
-| Script                  | O que faz                                                  |
-| ----------------------- | ---------------------------------------------------------- |
-| `npm run dev`           | Servidor de desenvolvimento                                |
-| `npm run build`         | Build de produção                                          |
-| `npm run lint`          | ESLint                                                     |
-| `npm run format`        | Prettier (escreve); `format:check` só verifica             |
-| `npm run typecheck`     | Gera os tipos de rota do Next e roda `tsc --noEmit`        |
-| `npm test`              | Testes unitários (Vitest); `test:watch` em modo observação |
-| `npm run test:e2e`      | Testes E2E (Playwright, desktop e mobile)                  |
-| `npm run check`         | Lint + typecheck + formatação + unitários                  |
-| `npm run db:start/stop` | Sobe/derruba o Supabase local                              |
-| `npm run db:reset`      | Recria o banco **local** aplicando migrations e `seed.sql` |
-| `npm run db:types`      | Gera `src/lib/database.types.ts` a partir do banco local   |
-| `npm run db:test`       | Testes pgTAP de RLS e schema (`supabase/tests/`)           |
-| `npm run check-sources` | Links das fontes, conteúdo com +90 dias e regras inválidas |
-| `npm run make-admin`    | Dá papel de admin a um e-mail (`-- pessoa@exemplo.com`)    |
+| Script                  | O que faz                                                                   |
+| ----------------------- | --------------------------------------------------------------------------- |
+| `npm run dev`           | Servidor de desenvolvimento                                                 |
+| `npm run build`         | Build de produção                                                           |
+| `npm run lint`          | ESLint                                                                      |
+| `npm run format`        | Prettier (escreve); `format:check` só verifica                              |
+| `npm run typecheck`     | Gera os tipos de rota do Next e roda `tsc --noEmit`                         |
+| `npm test`              | Testes unitários (Vitest); `test:watch` em modo observação                  |
+| `npm run test:e2e`      | Testes E2E (Playwright, desktop e mobile)                                   |
+| `npm run check`         | Lint + typecheck + formatação + unitários                                   |
+| `npm run db:start/stop` | Sobe/derruba o Supabase local                                               |
+| `npm run db:reset`      | Recria o banco **local** aplicando migrations e `seed.sql`                  |
+| `npm run db:types`      | Gera `src/lib/database.types.ts` a partir do banco local                    |
+| `npm run db:test`       | Testes pgTAP de RLS e schema (`supabase/tests/`)                            |
+| `npm run check-sources` | Links das fontes, conteúdo com +90 dias e regras inválidas                  |
+| `npm run make-admin`    | Dá papel de admin a um e-mail (`-- pessoa@exemplo.com`)                     |
+| `npm run ingest`        | Monta a base do assistente (`source_chunks`) a partir das fontes            |
+| `npm run ai:report`     | Roda as 10 perguntas de teste do assistente e gera `docs/ai-test-report.md` |
 
 Na primeira vez que rodar o E2E: `npx playwright install chromium`.
 
@@ -108,6 +110,18 @@ Criado com a skill `/sites-incriveis`, herdando a Rota Traçada. O app é a pró
 - `/admin/metricas`: funil (pessoas distintas por etapa) e retenção semanal por coorte.
 - Rate limit em Postgres (`hit_rate_limit`) na lista de espera, checkout e `/api/events`.
 - `/privacidade`: rascunho da política, **pendente de revisão jurídica**; razão social/CNPJ e e-mail do encarregado aparecem marcados como pendentes.
+
+## Assistente de IA (Fase 7, direção "Traçado de Rota")
+
+Desligado por padrão (`AI_ENABLED=false`). Recurso Pro, com cota mensal (`AI_MONTHLY_MESSAGE_QUOTA`, padrão 100) conferida no servidor antes de cada chamada.
+
+- **Base de conhecimento** (`npm run ingest`): para cada caminho publicado, baixa as `source_url` oficiais, extrai o texto, divide em trechos e grava em `source_chunks` com embeddings (pgvector, índice HNSW). Também grava os resumos curados (requisitos, etapas, documentos, custos), cada um com a URL oficial e a data de verificação: cobrem sites que bloqueiam leitura automática, que são pulados e não contornados. Opções: `-- --pathway=slug`, `-- --curated-only`, `-- --dry-run`. Rode de novo após editar conteúdo.
+- **Embeddings:** Voyage AI (`voyage-3.5`, 1024 dimensões) com `VOYAGE_API_KEY`; sem a chave, um provedor léxico offline. A busca só compara vetores do mesmo modelo, então **reingira ao trocar de provedor**.
+- **Resposta** (`POST /api/ai`, streaming NDJSON): busca por similaridade nos caminhos que a pessoa acompanha, e o modelo (`ANTHROPIC_MODEL`, padrão `claude-opus-5-5`, via SDK oficial `@anthropic-ai/sdk`) responde só com os trechos, cita a fonte de cada afirmação, diz quando não encontrou e recusa recomendar visto ou avaliar chances, indicando RMA, LIA ou RCIC/advogado. Também resume um caminho em linguagem simples e sugere a ordem do checklist, sem decidir elegibilidade.
+- **Proteções:** usuário logado e Pro, rate limit (8 por minuto), cota atômica em `consume_ai_message` (devolvida se a chamada falhar), system prompt fixo e cacheado, pedidos de aconselhamento sinalizados antes da chamada.
+- **Interface:** página `/app/assistente` e painel lateral ("Perguntar às fontes") em todas as telas do app. Cada citação crava um marco ligado à fonte oficial; pedidos de recomendação viram a placa "Fora da rota"; aviso legal carimbado junto ao campo; plano gratuito vê o "Diário selado".
+- **Testes:** unitários em `src/lib/ai/ai.test.ts`, pgTAP em `supabase/tests/database/ai.test.sql`, E2E em `e2e/assistant.spec.ts` (no CI roda com `AI_MOCK=true`, respostas simuladas e sem custo).
+- **Entregável das 10 perguntas:** `npm run ai:report` com `ANTHROPIC_API_KEY` no `.env.local` (custa alguns centavos). Sem a chave o relatório sai com respostas simuladas e avisa isso.
 
 ## Estrutura
 

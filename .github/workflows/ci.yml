@@ -102,7 +102,12 @@ jobs:
             echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL"
             echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY"
             echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+            echo "AI_ENABLED=true"
+            echo "AI_MOCK=true"
           } > .env.local
+
+      - name: Build the assistant knowledge base (curated, offline embeddings)
+        run: node scripts/ingest-sources.ts --curated-only
 
       - name: Build
         run: npm run build
@@ -111,7 +116,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Journey and admin E2E
-        run: npx playwright test app-flow admin billing --project=desktop
+        run: npx playwright test app-flow admin billing assistant --project=desktop
 
       - uses: actions/upload-artifact@v4
         if: failure()
