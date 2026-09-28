@@ -22,7 +22,8 @@
     "brand:logo": "node scripts/prepare-logo.mjs",
     "map:build": "node scripts/build-map.mjs",
     "db:test": "supabase test db",
-    "check-sources": "node scripts/check-sources.ts"
+    "check-sources": "node scripts/check-sources.ts",
+    "make-admin": "node scripts/make-admin.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

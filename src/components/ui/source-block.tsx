@@ -5,7 +5,7 @@ const dateFormat = new Intl.DateTimeFormat("pt-BR", {
   day: "2-digit",
   month: "2-digit",
   year: "numeric",
-  timeZone: "UTC",
+  timeZone: "America/Sao_Paulo",
 });
 
 /** Official source + last verification date. Shown next to every requirement. */
