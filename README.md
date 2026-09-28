@@ -71,6 +71,20 @@ Criado com a skill `/sites-incriveis` (Fase 2). A página inicial é uma carta d
 - **Movimento:** `prefers-reduced-motion` desliga reveals, desenho de rota e câmera.
 - **Textos:** centralizados em `src/content/` e marcados como rascunho até a revisão do fundador.
 
+## App do usuário (Fase 5, direção "Carta de Bordo")
+
+Criado com a skill `/sites-incriveis`, herdando a Rota Traçada. O app é a própria rota: um trilho de jornada (Perfil → Resultados → Painel → Conta), mapas com as rotas da pessoa e requisitos exibidos como pontos numa linha.
+
+- **Entrar:** `/entrar` com link mágico (a conta é criada no primeiro acesso). O Google aparece quando `NEXT_PUBLIC_AUTH_GOOGLE_ENABLED=true` e o provedor estiver configurado no Supabase (Authentication → Providers → Google, com a URL de callback `/auth/callback`).
+- **Proteção:** o `proxy` redireciona `/app/*` sem sessão para `/entrar?next=…`; cada página e Server Action confere o usuário de novo, e o RLS é a barreira final.
+- **Onboarding** (`/app/onboarding`): uma pergunta por tela, 11 perguntas em 5 trechos, cada resposta validada (Zod) e salva na hora.
+- **Resultados** (`/app/resultados`): motor de elegibilidade da Fase 4 sobre o perfil; ordenação por país e eliminatórios não atendidos, com o aviso de que não é recomendação.
+- **Caminho** (`/app/caminhos/[slug]`): dossiê com o status de cada requisito para o perfil e o botão "Acompanhar".
+- **Checklist** (`/app/planos/[id]`): etapas e documentos do caminho como rota vertical, com notas por item e situação do plano. Mostra aviso quando o caminho mudou de versão.
+- **Painel** (`/app/painel`) e **Conta** (`/app/conta`): exportar dados (JSON) e excluir conta (LGPD).
+- **Páginas públicas com SEO:** `/paises/[pais]` e `/caminhos/[pais]/[slug]` geradas do banco com ISR (1 h), metadata, canonical, Open Graph, JSON-LD de breadcrumb, `sitemap.xml` e `robots.txt`.
+- **E2E da jornada completa** (`e2e/app-flow.spec.ts`): cadastro → onboarding → resultados → acompanhar → marcar item → exportar → excluir. Roda localmente com o Supabase no ar e no CI num job próprio.
+
 ## Estrutura
 
 ```
