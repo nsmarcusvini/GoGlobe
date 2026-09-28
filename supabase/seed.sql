@@ -42,7 +42,7 @@ begin
   ) values (
     (select id from public.countries where code = p_country), p_slug, p_official, p_name,
     p_category, p_summary, p_duration, p_residence, p_url, p_calc,
-    'draft', '2026-09-28'
+    'draft', '2026-09-28 12:00:00-03'
   ) returning id into new_id;
   insert into _p values (p_slug, new_id);
 end $$;
@@ -176,7 +176,7 @@ select pg_temp.add_pathway('CA', 'post-graduation-work-permit',
 -- automatically from the profile.
 
 insert into public.requirements (pathway_id, key, label_pt, description_pt, rule, is_hard, source_url, last_verified_at, sort_order)
-select pg_temp.pw(r.slug), r.key, r.label, r.descr, r.rule::jsonb, r.hard, r.src, '2026-09-28', r.ord
+select pg_temp.pw(r.slug), r.key, r.label, r.descr, r.rule::jsonb, r.hard, r.src, '2026-09-28 12:00:00-03', r.ord
 from (values
   -- AU 189
   ('skilled-independent-189', 'age', 'Ter menos de 45 anos no convite', 'É preciso ter menos de 45 anos quando o governo envia o convite para aplicar.', '{"op":"age_max","value":44}', true, 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-tested', 1),
@@ -443,7 +443,7 @@ from (values
 -- Government fees only ("from" values for the main applicant).
 
 insert into public.cost_items (pathway_id, label_pt, amount_min, currency, is_mandatory, is_estimate, source_url, last_verified_at, sort_order)
-select pg_temp.pw(c.slug), c.label, c.amount, c.cur, true, false, c.src, '2026-09-28', c.ord
+select pg_temp.pw(c.slug), c.label, c.amount, c.cur, true, false, c.src, '2026-09-28 12:00:00-03', c.ord
 from (values
   ('skilled-independent-189', 'Taxa do visto (candidato principal, a partir de)', 6135.00, 'AUD', 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-tested', 1),
   ('skilled-nominated-190', 'Taxa do visto (candidato principal, a partir de)', 6140.00, 'AUD', 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-nominated-190', 1),
