@@ -6,6 +6,7 @@ import type { RouteCode } from "@/components/map/routes";
 import { ButtonLink } from "@/components/ui/button";
 import { appCopy } from "@/content/app";
 import { todayInBrasilia } from "@/lib/app/today";
+import { track } from "@/lib/analytics/track";
 import { cn } from "@/lib/cn";
 import { appPathwayHref, listPathways, toEngineInput } from "@/lib/data/content";
 import { requireUser } from "@/lib/data/user";
@@ -27,7 +28,8 @@ const COUNTRY_NAMES: Record<string, string> = {
 
 export default async function ResultsPage({ searchParams }: PageProps<"/app/resultados">) {
   const params = await searchParams;
-  const { supabase, profile } = await requireUser("/app/resultados");
+  const { supabase, user, profile } = await requireUser("/app/resultados");
+  await track("results_viewed", { userId: user.id });
   const [pathways, plans] = await Promise.all([
     listPathways(supabase),
     supabase.from("user_plans").select("pathway_id"),

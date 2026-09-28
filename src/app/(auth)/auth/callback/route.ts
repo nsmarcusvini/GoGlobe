@@ -1,5 +1,6 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
+import { track } from "@/lib/analytics/track";
 import { safeNextPath } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -24,6 +25,15 @@ export async function GET(request: NextRequest) {
   } else if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
     ok = !error;
+  }
+
+  if (ok) {
+    // A brand-new account (created in the last 15 minutes) completed sign-up.
+    const { data } = await supabase.auth.getUser();
+    const created = data.user ? Date.parse(data.user.created_at) : 0;
+    if (data.user && Date.now() - created < 15 * 60 * 1000) {
+      await track("signup_completed", { userId: data.user.id });
+    }
   }
 
   const target = ok ? next : `/entrar?erro=link-invalido`;

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import type { ActionState } from "@/app/admin/actions";
 import { fieldErrors } from "@/lib/admin/schemas";
+import { track } from "@/lib/analytics/track";
 import { safeNextPath } from "@/lib/auth/session";
 import { publicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
@@ -42,6 +43,7 @@ export async function sendMagicLink(_prev: ActionState, formData: FormData): Pro
           : "Não foi possível enviar o link. Tente de novo.",
     };
   }
+  await track("signup_started", { path: "/entrar" });
   return { ok: true, message: `Enviamos um link de acesso para ${parsed.data.email}.` };
 }
 
