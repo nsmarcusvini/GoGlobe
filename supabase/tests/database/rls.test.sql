@@ -7,18 +7,19 @@ create extension if not exists pgtap with schema extensions;
 select plan(36);
 
 -- ---------------------------------------------------------------- fixtures --
+-- Fixtures live in a fake country (ZZ) so the assertions ignore seeded content.
 -- Auth users (the signup trigger creates their profiles).
 insert into auth.users (id, email, aud, role, instance_id)
 values
-  ('00000000-0000-0000-0000-00000000000a', 'ana@goglobe.test', 'authenticated', 'authenticated', '00000000-0000-0000-0000-000000000000'),
-  ('00000000-0000-0000-0000-00000000000b', 'bruno@goglobe.test', 'authenticated', 'authenticated', '00000000-0000-0000-0000-000000000000'),
-  ('00000000-0000-0000-0000-0000000000ad', 'admin@goglobe.test', 'authenticated', 'authenticated', '00000000-0000-0000-0000-000000000000');
+  ('00000000-0000-0000-0000-00000000000a', 'rls-ana@goglobe.test', 'authenticated', 'authenticated', '00000000-0000-0000-0000-000000000000'),
+  ('00000000-0000-0000-0000-00000000000b', 'rls-bruno@goglobe.test', 'authenticated', 'authenticated', '00000000-0000-0000-0000-000000000000'),
+  ('00000000-0000-0000-0000-0000000000ad', 'rls-admin@goglobe.test', 'authenticated', 'authenticated', '00000000-0000-0000-0000-000000000000');
 
 update public.profiles set role = 'admin'
  where user_id = '00000000-0000-0000-0000-0000000000ad';
 
 insert into public.countries (id, code, name_pt, currency, official_site_url)
-values ('10000000-0000-0000-0000-000000000001', 'AU', 'Austrália', 'AUD', 'https://immi.homeaffairs.gov.au/');
+values ('10000000-0000-0000-0000-000000000001', 'ZZ', 'País de teste', 'AUD', 'https://immi.homeaffairs.gov.au/');
 
 insert into public.pathways (id, country_id, slug, official_name, name_pt, category, summary_pt, official_url, status, last_verified_at)
 values
@@ -67,8 +68,8 @@ select ok(
 set local role anon;
 select set_config('request.jwt.claims', '{"role":"anon"}', true);
 
-select is((select count(*)::int from public.pathways), 1, 'anon sees only published pathways');
-select is((select count(*)::int from public.requirements), 1, 'anon sees only requirements of published pathways');
+select is((select count(*)::int from public.pathways where country_id = '10000000-0000-0000-0000-000000000001'), 1, 'anon sees only published pathways');
+select is((select count(*)::int from public.requirements where pathway_id in ('20000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000002')), 1, 'anon sees only requirements of published pathways');
 select is((select count(*)::int from public.profiles), 0, 'anon sees no profiles');
 select is((select count(*)::int from public.user_plans), 0, 'anon sees no plans');
 select is((select count(*)::int from public.checklist_items), 0, 'anon sees no checklist items');
@@ -106,7 +107,7 @@ select is(
 );
 select is((select count(*)::int from public.subscriptions), 1, 'Ana sees only her subscription');
 select is((select plan::text from public.subscriptions), 'free', '... which is hers (free)');
-select is((select count(*)::int from public.pathways), 1, 'regular user does not see drafts');
+select is((select count(*)::int from public.pathways where country_id = '10000000-0000-0000-0000-000000000001'), 1, 'regular user does not see drafts');
 select is((select count(*)::int from public.content_changes), 0, 'regular user cannot read the change log');
 
 -- Writes against Bruno's rows affect nothing.
@@ -134,7 +135,7 @@ select throws_ok(
   '42501', null, 'Ana cannot upgrade her own subscription'
 );
 -- RLS filters the rows silently (0 affected); verified below as superuser.
-update public.pathways set name_pt = 'hack';
+update public.pathways set name_pt = 'hack' where country_id = '10000000-0000-0000-0000-000000000001';
 
 -- Own data is writable.
 update public.profiles set occupation_text = 'Enfermeira';
@@ -179,7 +180,7 @@ grant select on baseline to authenticated;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-0000000000ad","role":"authenticated"}', true);
 
-select is((select count(*)::int from public.pathways), 2, 'admin sees drafts too');
+select is((select count(*)::int from public.pathways where country_id = '10000000-0000-0000-0000-000000000001'), 2, 'admin sees drafts too');
 select is((select count(*)::int from public.user_plans), 0, 'admin does not read users'' plans (LGPD)');
 select lives_ok(
   $$update public.requirements set rule = '{"op":"age_max","value":45}'

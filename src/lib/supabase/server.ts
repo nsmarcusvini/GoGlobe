@@ -9,8 +9,10 @@ import { publicEnv } from "@/lib/env";
  * Runs with the user's session (RLS applies).
  */
 export async function createClient() {
-  const env = publicEnv();
+  // Read cookies first: it marks the route as dynamic before any env access, so
+  // builds without Supabase config (CI) never try to prerender with a client.
   const cookieStore = await cookies();
+  const env = publicEnv();
 
   return createServerClient<Database>(
     env.NEXT_PUBLIC_SUPABASE_URL,
