@@ -74,8 +74,8 @@ export async function startCheckout(formData: FormData): Promise<void> {
       locale: "pt-BR",
       payment_method_types: methods,
       ...(isSubscription ? { subscription_data: { metadata } } : {}),
-      // session_id lets /app/conta confirm the purchase without waiting for the webhook.
-      success_url: `${site}/app/conta?assinatura=ok&session_id={CHECKOUT_SESSION_ID}`,
+      // session_id lets the Base confirm the purchase without waiting for the webhook.
+      success_url: `${site}/app/base?assinatura=ok&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${site}/precos?checkout=cancelado`,
     });
 

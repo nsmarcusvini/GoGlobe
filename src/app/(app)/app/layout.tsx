@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { signOut } from "@/app/(app)/app/actions";
 import { JourneyRail } from "@/components/app/journey-rail";
 import { AssistantDrawer } from "@/components/assistant/assistant-drawer";
+import { ProNav } from "@/components/base/pro-nav";
 import { LegalNotice } from "@/components/legal-notice";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { appCopy } from "@/content/app";
 import { assistantCopy } from "@/content/assistant";
 import { aiEnabled, assistantState } from "@/lib/ai/server";
+import { getEntitlements } from "@/lib/billing/plan";
 import { requireUser } from "@/lib/data/user";
 
 export const metadata: Metadata = {
@@ -22,6 +24,8 @@ export default async function AppLayout({ children }: LayoutProps<"/app">) {
   const { supabase, user, profile } = await requireUser();
   const { count } = await supabase.from("user_plans").select("id", { count: "exact", head: true });
   const assistant = aiEnabled() ? await assistantState(supabase) : null;
+  // Pro members leave the onboarding rail behind: the app gets its own navigation.
+  const isPro = assistant ? assistant.isPro : (await getEntitlements(supabase)).isPro;
 
   const stops = [
     {
@@ -71,16 +75,23 @@ export default async function AppLayout({ children }: LayoutProps<"/app">) {
             </form>
           </div>
         </div>
+        {isPro && <ProNav assistant={!!assistant} />}
       </header>
 
-      <div className="container-page grid gap-6 py-6 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-12 lg:py-10">
-        <aside className="min-w-0 border-b border-line pb-3 lg:sticky lg:top-26 lg:self-start lg:border-b-0 lg:pb-0">
-          <JourneyRail stops={stops} />
-        </aside>
-        <main id="conteudo" className="min-w-0">
+      {isPro ? (
+        <main id="conteudo" className="container-page min-w-0 py-8 lg:py-14">
           {children}
         </main>
-      </div>
+      ) : (
+        <div className="container-page grid gap-6 py-6 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-12 lg:py-10">
+          <aside className="min-w-0 border-b border-line pb-3 lg:sticky lg:top-26 lg:self-start lg:border-b-0 lg:pb-0">
+            <JourneyRail stops={stops} />
+          </aside>
+          <main id="conteudo" className="min-w-0">
+            {children}
+          </main>
+        </div>
+      )}
 
       {assistant && <AssistantDrawer {...assistant} />}
 

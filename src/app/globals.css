@@ -38,6 +38,7 @@
   --ink-muted: #46586d; /* 6.8:1 on bg */
   --accent: var(--safira); /* 5.2:1 on bg */
   --route: var(--esmeralda);
+  --route-on-dark: #43c58a; /* green text on Abissal surfaces (7.3:1), both themes */
   --green-ink: #146e4a; /* 5.8:1 on bg: small green text */
   --cta: var(--esmeralda);
   --cta-ink: var(--branco); /* 4.8:1 on cta */
@@ -492,6 +493,14 @@
 @keyframes tab-in {
   from {
     transform: translate3d(100%, 0, 0);
+  }
+}
+
+/* Próxima Parada (Base): the next stop arrives from the right of the route. */
+@keyframes stop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(2.5rem, 0, 0);
   }
 }
 

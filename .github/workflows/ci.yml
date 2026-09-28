@@ -116,7 +116,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Journey and admin E2E
-        run: npx playwright test app-flow admin billing assistant --project=desktop
+        run: npx playwright test app-flow admin billing assistant base --project=desktop
 
       - uses: actions/upload-artifact@v4
         if: failure()
