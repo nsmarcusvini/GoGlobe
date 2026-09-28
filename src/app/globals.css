@@ -1,6 +1,438 @@
 @import "tailwindcss";
 
-/*
- * Design tokens are defined in Phase 2 by the /sites-incriveis skill.
- * Until then this file intentionally carries no visual styling.
- */
+/* =============================================================================
+   GoGlobe design system: direção de arte "Rota Traçada"
+   -----------------------------------------------------------------------------
+   Ideia: a rota é a interface. A página é uma carta de navegação clara (papel
+   Glacial, grade de latitude em hairline) sobre a qual uma rota Esmeralda se
+   desenha: do Brasil até cada país. Tudo o que é "dado oficial" fala em mono,
+   como coordenada; tudo o que é "voz do produto" fala em Bricolage Grotesque.
+
+   Decisões:
+   - Tipografia com contraste extremo: display condensado (wdth 75), pesado e
+     apertado (-0.045em), contra corpo neutro e confortável (1.6 / 65ch).
+   - Esmeralda (#198258) só em CTA e rota: é o "caminho". Texto verde pequeno usa
+     --green-ink (#146E4A, 5.8:1), porque #198258 sobre Glacial dá só 4.45:1.
+   - Mono (JetBrains) para coordenadas, códigos de visto, datas de verificação e
+     números de seção: o "carimbo" de que aquilo veio de uma fonte oficial.
+   - Detalhes escolhidos (e só eles): grade cartográfica hairline, grain sutil,
+     sombras tingidas de Abissal, sublinhado que cresce. Nada de glow ou degradê.
+   - Movimento: curva autoral (--ease-out-expo); prefers-reduced-motion zera tudo.
+   Contrastes verificados (AA) nos dois temas; ver comentários de cada token.
+   ============================================================================= */
+
+:root {
+  /* Brand palette (fixed by the founder) */
+  --abissal: #0b2545;
+  --safira: #226f96;
+  --esmeralda: #198258;
+  --glacial: #f4f7f6;
+  --branco: #ffffff;
+
+  /* Semantic: light (primary) */
+  --bg: var(--glacial);
+  --surface: var(--branco);
+  --surface-sunk: #e9efed;
+  --ink: var(--abissal); /* 14.3:1 on bg */
+  --ink-muted: #46586d; /* 6.8:1 on bg */
+  --accent: var(--safira); /* 5.2:1 on bg */
+  --route: var(--esmeralda);
+  --green-ink: #146e4a; /* 5.8:1 on bg: small green text */
+  --cta: var(--esmeralda);
+  --cta-ink: var(--branco); /* 4.8:1 on cta */
+  --cta-hover: #146e4a;
+  --line: rgb(11 37 69 / 0.12);
+  --line-strong: rgb(11 37 69 / 0.28);
+  --map-land: rgb(34 111 150 / 0.16);
+  --map-grid: rgb(11 37 69 / 0.1);
+  --map-country: rgb(34 111 150 / 0.42);
+  --map-country-active: rgb(25 130 88 / 0.55);
+
+  /* Requirement status (never a "recommendation" colour: purely state) */
+  --status-meets: #146e4a;
+  --status-meets-bg: rgb(25 130 88 / 0.1);
+  --status-fails: #b0322a; /* 5.8:1 */
+  --status-fails-bg: rgb(176 50 42 / 0.08);
+  --status-info: #8a5300; /* 5.9:1 */
+  --status-info-bg: rgb(138 83 0 / 0.09);
+  --status-manual: var(--safira);
+  --status-manual-bg: rgb(34 111 150 / 0.09);
+
+  --focus: #1f6fd1;
+  --shadow-tint: 11 37 69;
+  --grain-opacity: 0.05;
+
+  /* Type */
+  --font-display: var(--font-bricolage), "Arial Narrow", system-ui, sans-serif;
+  --font-body: var(--font-bricolage), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "Cascadia Mono", "Consolas", monospace;
+
+  --text-mega: clamp(3.4rem, 1.2rem + 10.5vw, 11.5rem);
+  --text-display: clamp(2.6rem, 1.4rem + 5.4vw, 6.25rem);
+  --text-title: clamp(1.75rem, 1.2rem + 2.2vw, 3rem);
+  --text-lead: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  --text-body: 1.0625rem;
+  --text-small: 0.9375rem;
+  --text-mono: 0.8125rem;
+
+  /* Space (section rhythm breathes: 120–200px desktop) */
+  --space-section: clamp(6rem, 3rem + 10vw, 12.5rem);
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --measure: 65ch;
+  --max: 88rem;
+
+  /* Radii: deliberately small (chart labels, not bubbles) */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-slow: 900ms;
+
+  /* Shadows tinted with Abissal (never neutral grey) */
+  --shadow-sm: 0 1px 0 rgb(var(--shadow-tint) / 0.06), 0 2px 6px -2px rgb(var(--shadow-tint) / 0.1);
+  --shadow-md:
+    0 1px 0 rgb(var(--shadow-tint) / 0.05), 0 12px 32px -12px rgb(var(--shadow-tint) / 0.22);
+  --shadow-lift:
+    0 2px 0 rgb(var(--shadow-tint) / 0.06), 0 24px 48px -20px rgb(var(--shadow-tint) / 0.32);
+
+  color-scheme: light;
+}
+
+/* Dark: Abissal becomes the sea; the route glows brighter to keep 7:1+. */
+:root[data-theme="dark"] {
+  --bg: #06172b;
+  --surface: var(--abissal);
+  --surface-sunk: #041222;
+  --ink: var(--glacial); /* 16.7:1 */
+  --ink-muted: #9fb0c2; /* 8.1:1 */
+  --accent: #6db4dd; /* 7.9:1 */
+  --route: #43c58a;
+  --green-ink: #43c58a; /* 8.2:1 */
+  --cta: #43c58a;
+  --cta-ink: #06172b; /* 8.2:1 */
+  --cta-hover: #5fd49e;
+  --line: rgb(244 247 246 / 0.12);
+  --line-strong: rgb(244 247 246 / 0.28);
+  --map-land: rgb(109 180 221 / 0.14);
+  --map-grid: rgb(244 247 246 / 0.07);
+  --map-country: rgb(109 180 221 / 0.36);
+  --map-country-active: rgb(67 197 138 / 0.5);
+  --status-meets: #43c58a;
+  --status-meets-bg: rgb(67 197 138 / 0.12);
+  --status-fails: #f1837a;
+  --status-fails-bg: rgb(241 131 122 / 0.12);
+  --status-info: #f2b35b;
+  --status-info-bg: rgb(242 179 91 / 0.12);
+  --status-manual: #6db4dd;
+  --status-manual-bg: rgb(109 180 221 / 0.12);
+  --focus: #8cc8ff;
+  --shadow-tint: 0 0 0;
+  --grain-opacity: 0.07;
+  color-scheme: dark;
+}
+
+/* No-JS fallback: follow the OS unless the visitor forced light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #06172b;
+    --surface: var(--abissal);
+    --surface-sunk: #041222;
+    --ink: var(--glacial);
+    --ink-muted: #9fb0c2;
+    --accent: #6db4dd;
+    --route: #43c58a;
+    --green-ink: #43c58a;
+    --cta: #43c58a;
+    --cta-ink: #06172b;
+    --cta-hover: #5fd49e;
+    --line: rgb(244 247 246 / 0.12);
+    --line-strong: rgb(244 247 246 / 0.28);
+    --map-land: rgb(109 180 221 / 0.14);
+    --map-grid: rgb(244 247 246 / 0.07);
+    --map-country: rgb(109 180 221 / 0.36);
+    --map-country-active: rgb(67 197 138 / 0.5);
+    --status-meets: #43c58a;
+    --status-meets-bg: rgb(67 197 138 / 0.12);
+    --status-fails: #f1837a;
+    --status-fails-bg: rgb(241 131 122 / 0.12);
+    --status-info: #f2b35b;
+    --status-info-bg: rgb(242 179 91 / 0.12);
+    --status-manual: #6db4dd;
+    --status-manual-bg: rgb(109 180 221 / 0.12);
+    --focus: #8cc8ff;
+    --shadow-tint: 0 0 0;
+    --grain-opacity: 0.07;
+    color-scheme: dark;
+  }
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-sunk: var(--surface-sunk);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-route: var(--route);
+  --color-green-ink: var(--green-ink);
+  --color-cta: var(--cta);
+  --color-cta-ink: var(--cta-ink);
+  --color-cta-hover: var(--cta-hover);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-focus: var(--focus);
+  --color-abissal: var(--abissal);
+  --color-glacial: var(--glacial);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  --text-mega: var(--text-mega);
+  --text-display: var(--text-display);
+  --text-title: var(--text-title);
+  --text-lead: var(--text-lead);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-in-out-quart: var(--ease-in-out-quart);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lift: var(--shadow-lift);
+}
+
+/* ---------------------------------------------------------------- base ---- */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    font-variation-settings: "wdth" 100;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color var(--dur-base) var(--ease-out-expo),
+      color var(--dur-base) var(--ease-out-expo);
+  }
+
+  ::selection {
+    background: var(--route);
+    color: var(--cta-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* ----------------------------------------------------------- utilities ---- */
+
+@layer components {
+  /* Display type: condensed, heavy, tight (but letters never touch). */
+  .type-mega,
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-variation-settings:
+      "wdth" 78,
+      "opsz" 96;
+    letter-spacing: -0.022em;
+    line-height: 0.92;
+  }
+  .type-mega {
+    font-size: var(--text-mega);
+  }
+  .type-display {
+    font-size: var(--text-display);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  .type-title {
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 700;
+    font-variation-settings:
+      "wdth" 85,
+      "opsz" 48;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+  }
+  .type-lead {
+    font-size: var(--text-lead);
+    line-height: 1.5;
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+  /* Coordinates, visa codes, verification dates, section numbers. */
+  .type-mono {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .type-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .container-page {
+    width: 100%;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding-inline: max(var(--gutter), env(safe-area-inset-left));
+  }
+
+  /* Link whose underline grows from the left. */
+  .link-route {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size var(--dur-base) var(--ease-out-expo);
+    text-decoration: none;
+  }
+  .link-route:hover,
+  .link-route:focus-visible {
+    background-size: 100% 1px;
+  }
+  /* Always-underlined variant for links inside running text. */
+  .link-inline {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--line-strong);
+    transition: text-decoration-color var(--dur-fast) var(--ease-out-expo);
+  }
+  .link-inline:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* Paper grain: a tiny inline SVG noise, no network request. */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  [data-theme="dark"] .grain::after {
+    mix-blend-mode: screen;
+  }
+
+  /* Cartographic layers tinted by tokens through mask-image. */
+  .map-layer {
+    position: absolute;
+    inset: 0;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+  .map-land {
+    background: var(--map-land);
+    -webkit-mask-image: url("/map/land.svg");
+    mask-image: url("/map/land.svg");
+  }
+  .map-grid {
+    background: var(--map-grid);
+    -webkit-mask-image: url("/map/graticule.svg");
+    mask-image: url("/map/graticule.svg");
+  }
+
+  /* Scroll reveal (toggled by <Reveal>). */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    transition:
+      opacity var(--dur-slow) var(--ease-out-expo),
+      transform var(--dur-slow) var(--ease-out-expo);
+    transition-delay: calc(var(--stagger, 0) * 80ms);
+  }
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hud-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+}
+
+/* Hero route: draws once on load, crossing the headline. */
+@keyframes route-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+
+/* Motion off means off: no reveals, no drawing, no camera. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
